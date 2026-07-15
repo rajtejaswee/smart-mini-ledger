@@ -53,8 +53,8 @@ export function BalanceHero({
         )}
       </div>
 
-      {/* Income / Spent this month */}
-      <div className="relative mt-4 grid grid-cols-2 gap-3 border-t border-white/10 pt-4">
+      {/* Income / Spent this month — frosted glass strip */}
+      <div className="glass relative mt-4 grid grid-cols-2 gap-3 rounded-2xl p-4">
         <MiniStat
           icon={<ArrowDownLeft className="size-4" />}
           label="Income this month"

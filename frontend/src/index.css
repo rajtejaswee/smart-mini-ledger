@@ -114,6 +114,31 @@
   }
 }
 
+/* Neon primary — glowing electric-blue action */
+@layer components {
+  .neon-primary {
+    background-image: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+    color: #fff;
+    box-shadow:
+      0 4px 16px -2px rgba(37, 99, 235, 0.5),
+      0 1px 2px rgba(37, 99, 235, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  }
+  .neon-primary:hover {
+    box-shadow:
+      0 10px 30px -4px rgba(37, 99, 235, 0.72),
+      inset 0 1px 0 rgba(255, 255, 255, 0.34);
+    filter: brightness(1.07);
+  }
+
+  /* Frosted glass surface (over dark backgrounds) */
+  .glass {
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+  }
+}
+
 /* Staggered card entrance on dashboards */
 @layer utilities {
   .stagger > * {

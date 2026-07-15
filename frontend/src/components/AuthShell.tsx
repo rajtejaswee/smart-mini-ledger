@@ -24,7 +24,7 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
         <div className="pointer-events-none absolute -bottom-32 -left-20 size-80 rounded-full bg-white/[0.03] blur-3xl" />
 
         <div className="relative flex items-center gap-2.5">
-          <span className="grid size-9 place-items-center rounded-[11px] bg-primary text-white shadow-soft">
+          <span className="glass grid size-9 place-items-center rounded-[11px] text-white">
             <Wallet className="size-5" strokeWidth={2.25} />
           </span>
           <span className="text-xl font-bold tracking-tight">Ledger</span>

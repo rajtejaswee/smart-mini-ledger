@@ -30,7 +30,7 @@ export function AppSidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col bg-sidebar px-4 py-6 lg:flex">
       <div className="flex items-center gap-2.5 px-2">
-        <span className="grid size-8 place-items-center rounded-[10px] bg-primary text-white shadow-soft">
+        <span className="glass grid size-8 place-items-center rounded-[10px] text-white">
           <Wallet className="size-4.5" strokeWidth={2.25} />
         </span>
         <span className="text-lg font-bold tracking-tight text-white">Ledger</span>
@@ -46,7 +46,7 @@ export function AppSidebar() {
               cn(
                 "flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium transition-colors duration-200",
                 isActive
-                  ? "bg-white/10 text-white"
+                  ? "bg-primary/15 text-white ring-1 ring-inset ring-primary/25 shadow-[0_0_24px_-10px_rgba(59,130,246,0.75)]"
                   : "text-sidebar-muted hover:bg-white/5 hover:text-white"
               )
             }

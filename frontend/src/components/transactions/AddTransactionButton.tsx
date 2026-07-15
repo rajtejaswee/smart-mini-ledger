@@ -18,7 +18,7 @@ export function AddTransactionButton({ reload }: { reload: () => void }) {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Add transaction"
-        className="fixed bottom-20 right-5 z-30 grid size-14 place-items-center rounded-pill bg-neutral-900 text-white shadow-float transition-transform duration-200 hover:scale-105 active:scale-95 sm:hidden"
+        className="neon-primary fixed bottom-20 right-5 z-30 grid size-14 place-items-center rounded-pill transition-transform duration-200 hover:scale-105 active:scale-95 sm:hidden"
       >
         <Plus className="size-6" />
       </button>
