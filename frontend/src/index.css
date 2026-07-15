@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Design tokens — Apple-inspired, calm & data-focused
+   ============================================================ */
+@theme {
+  /* Type */
+  --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Palette */
+  --color-canvas: #ffffff; /* page background      */
+  --color-card: #f8fafc; /* card surface         */
+  --color-primary: #2563eb; /* actions / accents    */
+  --color-primary-ink: #ffffff; /* text on primary      */
+  --color-income: #16a34a;
+  --color-expense: #dc2626;
+  --color-ink: #111827; /* primary text         */
+  --color-muted: #6b7280; /* secondary text       */
+  --color-line: #e9edf2; /* hairline borders     */
+
+  /* Radii */
+  --radius-btn: 12px;
+  --radius-input: 12px;
+  --radius-card: 18px;
+  --radius-chart: 18px;
+  --radius-pill: 999px;
+
+  /* Shadows — soft, never heavy */
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+  /* Motion */
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-rise: rise 240ms var(--ease-out-soft) both;
+  --animate-fade: fade 240ms var(--ease-out-soft) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  /* Accessible keyboard focus — visible ring, only for keyboard users */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+  }
+
+  /* Tabular figures for money so columns line up */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
