@@ -1,11 +1,12 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, CalendarClock, CalendarDays } from "lucide-react";
+import { LayoutDashboard, CalendarClock, CalendarDays, Settings } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 const items = [
   { to: "/", label: "Home", icon: LayoutDashboard, end: true },
   { to: "/timeline", label: "Timeline", icon: CalendarClock },
   { to: "/calendar", label: "Calendar", icon: CalendarDays },
+  { to: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function MobileNav() {

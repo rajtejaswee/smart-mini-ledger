@@ -22,6 +22,7 @@ const nav: NavItem[] = [
   { label: "Dashboard", icon: LayoutDashboard, to: "/", end: true },
   { label: "Timeline", icon: CalendarClock, to: "/timeline" },
   { label: "Calendar", icon: CalendarDays, to: "/calendar" },
+  { label: "Settings", icon: Settings, to: "/settings" },
 ];
 
 export function AppSidebar() {
@@ -55,14 +56,6 @@ export function AppSidebar() {
             <span className="flex-1 text-left">{item.label}</span>
           </NavLink>
         ))}
-
-        <div className="flex cursor-default items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium text-sidebar-muted/60">
-          <Settings className="size-4.5" aria-hidden />
-          <span className="flex-1 text-left">Settings</span>
-          <span className="rounded-pill bg-white/5 px-1.5 py-0.5 text-[10px] font-semibold">
-            Soon
-          </span>
-        </div>
       </nav>
 
       <div className="mt-4 border-t border-white/10 pt-4">

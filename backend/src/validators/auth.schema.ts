@@ -20,5 +20,26 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+export const updateProfileSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(80, "Name is too long").optional(),
+  // null clears the figure; rounded to 2dp like every other money value.
+  monthlyIncome: z
+    .number()
+    .nonnegative("Monthly income cannot be negative")
+    .transform((n) => Math.round(n * 100) / 100)
+    .nullable()
+    .optional(),
+});
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(100, "Password is too long"),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;

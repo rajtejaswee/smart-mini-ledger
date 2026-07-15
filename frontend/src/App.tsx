@@ -7,6 +7,7 @@ import Signup from "@/pages/Signup";
 import Dashboard from "@/pages/Dashboard";
 import Timeline from "@/pages/Timeline";
 import CalendarPage from "@/pages/Calendar";
+import Settings from "@/pages/Settings";
 
 function Protected({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -60,6 +61,14 @@ export default function App() {
         element={
           <Protected>
             <CalendarPage />
+          </Protected>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <Protected>
+            <Settings />
           </Protected>
         }
       />
