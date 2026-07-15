@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { AppSidebar } from "./AppSidebar";
+import { MobileNav } from "./MobileNav";
 import { Logo } from "./ui/Logo";
 import { Button } from "./ui/Button";
 
@@ -21,8 +22,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
       </header>
 
       <div className="lg:pl-64">
-        <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">{children}</main>
+        <main className="mx-auto max-w-6xl px-4 pb-24 pt-8 sm:px-6 lg:px-8 lg:pb-8">
+          {children}
+        </main>
       </div>
+
+      <MobileNav />
     </div>
   );
 }

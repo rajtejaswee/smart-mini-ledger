@@ -1,21 +1,27 @@
-import { LayoutDashboard, ArrowLeftRight, Sparkles, Settings, LogOut, Wallet } from "lucide-react";
+import {
+  LayoutDashboard,
+  CalendarClock,
+  CalendarDays,
+  Settings,
+  LogOut,
+  Wallet,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/cn";
 
 interface NavItem {
   label: string;
   icon: LucideIcon;
-  active?: boolean;
-  soon?: boolean;
+  to: string;
+  end?: boolean;
 }
 
-// Dashboard is live; the rest are scaffolded for upcoming phases.
 const nav: NavItem[] = [
-  { label: "Dashboard", icon: LayoutDashboard, active: true },
-  { label: "Transactions", icon: ArrowLeftRight, soon: true },
-  { label: "Insights", icon: Sparkles, soon: true },
-  { label: "Settings", icon: Settings, soon: true },
+  { label: "Dashboard", icon: LayoutDashboard, to: "/", end: true },
+  { label: "Timeline", icon: CalendarClock, to: "/timeline" },
+  { label: "Calendar", icon: CalendarDays, to: "/calendar" },
 ];
 
 export function AppSidebar() {
@@ -32,28 +38,31 @@ export function AppSidebar() {
 
       <nav className="mt-8 flex flex-1 flex-col gap-1">
         {nav.map((item) => (
-          <button
-            key={item.label}
-            type="button"
-            aria-current={item.active ? "page" : undefined}
-            aria-disabled={item.soon}
-            className={cn(
-              "group flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium transition-colors duration-200",
-              item.active
-                ? "bg-white/10 text-white"
-                : "text-sidebar-muted hover:bg-white/5 hover:text-white",
-              item.soon && "cursor-default"
-            )}
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.end}
+            className={({ isActive }) =>
+              cn(
+                "flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium transition-colors duration-200",
+                isActive
+                  ? "bg-white/10 text-white"
+                  : "text-sidebar-muted hover:bg-white/5 hover:text-white"
+              )
+            }
           >
             <item.icon className="size-4.5" aria-hidden />
             <span className="flex-1 text-left">{item.label}</span>
-            {item.soon && (
-              <span className="rounded-pill bg-white/5 px-1.5 py-0.5 text-[10px] font-semibold text-sidebar-muted">
-                Soon
-              </span>
-            )}
-          </button>
+          </NavLink>
         ))}
+
+        <div className="flex cursor-default items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium text-sidebar-muted/60">
+          <Settings className="size-4.5" aria-hidden />
+          <span className="flex-1 text-left">Settings</span>
+          <span className="rounded-pill bg-white/5 px-1.5 py-0.5 text-[10px] font-semibold">
+            Soon
+          </span>
+        </div>
       </nav>
 
       <div className="mt-4 border-t border-white/10 pt-4">

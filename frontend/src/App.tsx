@@ -5,6 +5,8 @@ import { FullScreenLoader } from "@/components/FullScreenLoader";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import Dashboard from "@/pages/Dashboard";
+import Timeline from "@/pages/Timeline";
+import CalendarPage from "@/pages/Calendar";
 
 function Protected({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -42,6 +44,22 @@ export default function App() {
         element={
           <Protected>
             <Dashboard />
+          </Protected>
+        }
+      />
+      <Route
+        path="/timeline"
+        element={
+          <Protected>
+            <Timeline />
+          </Protected>
+        }
+      />
+      <Route
+        path="/calendar"
+        element={
+          <Protected>
+            <CalendarPage />
           </Protected>
         }
       />

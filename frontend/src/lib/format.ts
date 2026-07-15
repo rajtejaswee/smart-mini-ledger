@@ -31,3 +31,19 @@ export function formatDateLong(iso: string): string {
     year: "numeric",
   });
 }
+
+// "Today" / "Yesterday" / "Monday, 14 Jul" — for timeline day headers.
+export function formatDayLabel(d: Date): string {
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+  if (d.toDateString() === today.toDateString()) return "Today";
+  if (d.toDateString() === yesterday.toDateString()) return "Yesterday";
+  return d.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short" });
+}
+
+// Signed money for deltas: +₹500 / −₹500
+export function formatSigned(n: number): string {
+  const sign = n >= 0 ? "+" : "−";
+  return `${sign}${formatMoney(Math.abs(n))}`;
+}
