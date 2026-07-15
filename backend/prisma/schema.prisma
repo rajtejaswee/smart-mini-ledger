@@ -1,0 +1,44 @@
+// Prisma schema for the Smart Mini-Ledger
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  passwordHash  String
+  name          String
+  monthlyIncome Float?        // optional — helps the Cash Burn Meter projection
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  transactions  Transaction[]
+}
+
+model Transaction {
+  id        String          @id @default(cuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Float
+  type      TransactionType
+  category  String
+  note      String?
+  date      DateTime        @default(now())
+  isDeleted Boolean         @default(false) // soft delete → powers the Undo window
+  createdAt DateTime        @default(now())
+
+  // Fast lookups for per-user feeds and the duplicate-detection window
+  @@index([userId, date])
+  @@index([userId, isDeleted])
+}
