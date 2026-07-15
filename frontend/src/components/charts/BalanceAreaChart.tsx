@@ -27,7 +27,7 @@ export function BalanceAreaChart({
   onDark?: boolean;
   height?: number;
 }) {
-  const stroke = onDark ? "#7ab0ff" : "var(--color-primary)";
+  const stroke = onDark ? "#e5e5e5" : "var(--color-primary)";
   const gradId = onDark ? "balFillDark" : "balFill";
   return (
     <ResponsiveContainer width="100%" height={height}>

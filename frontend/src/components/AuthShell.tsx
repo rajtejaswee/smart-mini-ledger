@@ -19,9 +19,9 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
   return (
     <main className="grid min-h-dvh lg:grid-cols-2">
       {/* Brand panel */}
-      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#111c33] to-[#1e293b] p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <div className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-primary/25 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 -left-20 size-80 rounded-full bg-primary/10 blur-3xl" />
+      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-[#050505] via-[#0e0e10] to-[#191919] p-12 text-white lg:flex lg:flex-col lg:justify-between">
+        <div className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-white/[0.06] blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -left-20 size-80 rounded-full bg-white/[0.03] blur-3xl" />
 
         <div className="relative flex items-center gap-2.5">
           <span className="grid size-9 place-items-center rounded-[11px] bg-primary text-white shadow-soft">

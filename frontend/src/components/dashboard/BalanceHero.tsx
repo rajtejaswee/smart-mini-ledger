@@ -28,9 +28,9 @@ export function BalanceHero({
   const animated = useCountUp(balance);
 
   return (
-    <div className="relative flex h-full flex-col overflow-hidden rounded-card bg-gradient-to-br from-[#0f172a] via-[#111c33] to-[#1e293b] p-6 text-white shadow-hero sm:p-7">
+    <div className="relative flex h-full flex-col overflow-hidden rounded-card bg-gradient-to-br from-[#050505] via-[#0e0e10] to-[#191919] p-6 text-white shadow-hero sm:p-7">
       {/* soft glow */}
-      <div className="pointer-events-none absolute -right-16 -top-20 size-56 rounded-full bg-primary/25 blur-3xl" />
+      <div className="pointer-events-none absolute -right-16 -top-20 size-56 rounded-full bg-white/[0.06] blur-3xl" />
 
       <div className="relative flex items-start justify-between">
         <div>
