@@ -5,6 +5,7 @@ import { env } from "./config/env";
 import { notFound, errorHandler } from "./middlewares/errorHandler";
 import authRoutes from "./routes/auth.routes";
 import transactionRoutes from "./routes/transaction.routes";
+import insightRoutes from "./routes/insights.routes";
 
 const app = express();
 
@@ -20,7 +21,7 @@ app.get("/api/health", (_req, res) => {
 // --- Feature routes ---
 app.use("/api/auth", authRoutes);
 app.use("/api/transactions", transactionRoutes);
-// app.use("/api/insights", insightRoutes);
+app.use("/api/insights", insightRoutes);
 
 // --- 404 + error handling (must be last) ---
 app.use(notFound);
