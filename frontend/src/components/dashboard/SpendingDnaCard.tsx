@@ -17,8 +17,8 @@ export function SpendingDnaCard({
     : "No expenses recorded yet.";
 
   return (
-    <div className="flex h-full flex-col rounded-card border border-line bg-white p-6 shadow-soft">
-      <h3 className="text-sm font-semibold text-ink">Spending DNA</h3>
+    <div className="flex h-full flex-col rounded-card border border-line bg-white p-6 shadow-card">
+      <h3 className="eyebrow">Spending DNA</h3>
 
       {slices.length === 0 ? (
         <div className="grid flex-1 place-items-center py-10 text-center text-sm text-muted">

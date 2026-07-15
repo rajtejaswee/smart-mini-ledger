@@ -1,15 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 import type { Summary, Transaction, Burn, Replay } from "@/lib/types";
-import { formatMoney, formatMoneyCompact, formatDateLong } from "@/lib/format";
+import { formatMoneyCompact, formatDateLong } from "@/lib/format";
 import { runningBalanceSeries, categoryBreakdown, pctChange } from "@/lib/derive";
 import { AppLayout } from "@/components/AppLayout";
 import { AddTransactionButton } from "@/components/transactions/AddTransactionButton";
 import { BalanceHero } from "@/components/dashboard/BalanceHero";
-import { KpiCard } from "@/components/dashboard/KpiCard";
-import { TrendBadge } from "@/components/dashboard/TrendBadge";
 import { SpendingDnaCard } from "@/components/dashboard/SpendingDnaCard";
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
 import { MonthlyReplayCard } from "@/components/dashboard/MonthlyReplayCard";
@@ -115,34 +112,21 @@ function DashboardGrid({ data }: { data: DashboardData }) {
       : undefined;
 
   return (
-    <div className="grid grid-cols-1 gap-5 animate-rise lg:grid-cols-3">
+    <div className="stagger grid grid-cols-1 gap-5 lg:grid-cols-3">
       <div className="lg:col-span-2">
         <BalanceHero
           balance={summary.balance}
           series={series}
           trendPct={balanceTrend}
           runwayNote={runwayNote}
+          income={{ value: replay.earned, trend: incomeTrend }}
+          expense={{ value: replay.spent, trend: expenseTrend }}
         />
       </div>
 
-      <div className="lg:row-span-2">
+      <div>
         <SpendingDnaCard slices={slices} total={total} />
       </div>
-
-      <KpiCard
-        icon={ArrowDownLeft}
-        label="Income this month"
-        value={formatMoney(replay.earned)}
-        tone="income"
-        trend={<TrendBadge pct={incomeTrend} goodWhenUp />}
-      />
-      <KpiCard
-        icon={ArrowUpRight}
-        label="Spent this month"
-        value={formatMoney(replay.spent)}
-        tone="expense"
-        trend={<TrendBadge pct={expenseTrend} goodWhenUp={false} />}
-      />
 
       <div className="lg:col-span-2">
         <RecentTransactions txns={txns} />

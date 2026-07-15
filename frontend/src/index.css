@@ -39,9 +39,11 @@
   --radius-chart: 18px;
   --radius-pill: 999px;
 
-  /* Shadows — soft, never heavy */
-  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.08);
+  /* Shadows — soft, layered, never heavy */
+  --shadow-soft: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.05);
+  --shadow-float: 0 12px 32px rgba(16, 24, 40, 0.12);
+  --shadow-hero: 0 18px 40px -12px rgba(15, 23, 42, 0.35);
 
   /* Motion */
   --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
@@ -101,6 +103,26 @@
   .tnum {
     font-variant-numeric: tabular-nums;
   }
+
+  /* Editorial eyebrow label — the luxury signature */
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+}
+
+/* Staggered card entrance on dashboards */
+@layer utilities {
+  .stagger > * {
+    animation: rise 0.5s var(--ease-out-soft) both;
+  }
+  .stagger > *:nth-child(1) { animation-delay: 0.02s; }
+  .stagger > *:nth-child(2) { animation-delay: 0.08s; }
+  .stagger > *:nth-child(3) { animation-delay: 0.14s; }
+  .stagger > *:nth-child(4) { animation-delay: 0.2s; }
 }
 
 @media (prefers-reduced-motion: reduce) {

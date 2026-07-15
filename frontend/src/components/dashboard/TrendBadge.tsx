@@ -6,9 +6,11 @@ import { cn } from "@/lib/cn";
 export function TrendBadge({
   pct,
   goodWhenUp = true,
+  onDark = false,
 }: {
   pct: number | null;
   goodWhenUp?: boolean;
+  onDark?: boolean;
 }) {
   if (pct === null || !isFinite(pct)) return null;
   const up = pct >= 0;
@@ -18,7 +20,13 @@ export function TrendBadge({
     <span
       className={cn(
         "inline-flex items-center gap-1 rounded-pill px-2 py-0.5 text-xs font-semibold",
-        good ? "bg-income/10 text-income" : "bg-expense/10 text-expense"
+        onDark
+          ? good
+            ? "bg-white/10 text-emerald-300"
+            : "bg-white/10 text-rose-300"
+          : good
+            ? "bg-income/10 text-income"
+            : "bg-expense/10 text-expense"
       )}
     >
       <Icon className="size-3.5" aria-hidden />

@@ -18,30 +18,40 @@ function AreaTip({ active, payload }: TipProps) {
   );
 }
 
-export function BalanceAreaChart({ data }: { data: Point[] }) {
+export function BalanceAreaChart({
+  data,
+  onDark = false,
+  height = 132,
+}: {
+  data: Point[];
+  onDark?: boolean;
+  height?: number;
+}) {
+  const stroke = onDark ? "#7ab0ff" : "var(--color-primary)";
+  const gradId = onDark ? "balFillDark" : "balFill";
   return (
-    <ResponsiveContainer width="100%" height={132}>
+    <ResponsiveContainer width="100%" height={height}>
       <AreaChart data={data} margin={{ top: 6, right: 2, bottom: 0, left: 2 }}>
         <defs>
-          <linearGradient id="balFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--color-primary)" stopOpacity={0.16} />
-            <stop offset="100%" stopColor="var(--color-primary)" stopOpacity={0} />
+          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={stroke} stopOpacity={onDark ? 0.32 : 0.16} />
+            <stop offset="100%" stopColor={stroke} stopOpacity={0} />
           </linearGradient>
         </defs>
         <XAxis dataKey="date" hide />
         <YAxis hide domain={["dataMin", "dataMax"]} />
         <Tooltip
           content={<AreaTip />}
-          cursor={{ stroke: "var(--color-line)", strokeWidth: 1 }}
+          cursor={{ stroke: onDark ? "rgba(255,255,255,0.25)" : "var(--color-line)", strokeWidth: 1 }}
         />
         <Area
           type="monotone"
           dataKey="value"
-          stroke="var(--color-primary)"
+          stroke={stroke}
           strokeWidth={2}
-          fill="url(#balFill)"
+          fill={`url(#${gradId})`}
           dot={false}
-          activeDot={{ r: 4, strokeWidth: 0, fill: "var(--color-primary)" }}
+          activeDot={{ r: 4, strokeWidth: 0, fill: stroke }}
         />
       </AreaChart>
     </ResponsiveContainer>

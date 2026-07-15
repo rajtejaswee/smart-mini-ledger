@@ -8,8 +8,8 @@ export function RecentTransactions({ txns }: { txns: Transaction[] }) {
   const recent = txns.slice(0, 6);
 
   return (
-    <div className="h-full rounded-card border border-line bg-white p-6 shadow-soft">
-      <h3 className="text-sm font-semibold text-ink">Recent activity</h3>
+    <div className="h-full rounded-card border border-line bg-white p-6 shadow-card">
+      <h3 className="eyebrow">Recent activity</h3>
 
       {recent.length === 0 ? (
         <div className="grid place-items-center py-12 text-center text-sm text-muted">

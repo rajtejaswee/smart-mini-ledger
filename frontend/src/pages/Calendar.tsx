@@ -4,7 +4,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { MonthNav } from "@/components/MonthNav";
 import { AddTransactionButton } from "@/components/transactions/AddTransactionButton";
 import { useLedger } from "@/hooks/useLedger";
-import { buildCalendar, sameDay, WEEKDAYS } from "@/lib/month";
+import { buildCalendar, sameDay, isSameMonth, WEEKDAYS } from "@/lib/month";
 import { categoryIcon } from "@/lib/categories";
 import { formatMoney, formatMoneyCompact, formatDayLabel } from "@/lib/format";
 import { cn } from "@/lib/cn";
@@ -14,8 +14,17 @@ export default function CalendarPage() {
   const { txns, loading, load, month, prev, next, canNext } = useLedger();
   const [selected, setSelected] = useState<Date | null>(null);
 
-  // Reset the selected day whenever the month changes.
-  useEffect(() => setSelected(null), [month]);
+  // Auto-select the most recent active day so the panel is never empty on load.
+  useEffect(() => {
+    const inMonth = txns.filter((t) => isSameMonth(new Date(t.date), month));
+    if (inMonth.length === 0) {
+      setSelected(null);
+      return;
+    }
+    const latest = inMonth.reduce((a, b) => (new Date(a.date) > new Date(b.date) ? a : b));
+    const d = new Date(latest.date);
+    setSelected(new Date(d.getFullYear(), d.getMonth(), d.getDate()));
+  }, [month, txns]);
 
   const cells = buildCalendar(month, txns);
   const maxSpend = Math.max(1, ...cells.map((c) => c.spend));
@@ -41,7 +50,7 @@ export default function CalendarPage() {
       ) : (
         <div className="grid animate-rise gap-5 lg:grid-cols-3">
           {/* Heatmap grid */}
-          <div className="rounded-card border border-line bg-white p-4 shadow-soft sm:p-6 lg:col-span-2">
+          <div className="rounded-card border border-line bg-white p-4 shadow-card sm:p-6 lg:col-span-2">
             <div className="grid grid-cols-7 gap-1.5">
               {WEEKDAYS.map((d) => (
                 <div key={d} className="pb-2 text-center text-xs font-semibold text-muted">
@@ -98,6 +107,23 @@ export default function CalendarPage() {
                 );
               })}
             </div>
+
+            {/* Heatmap legend */}
+            <div className="mt-4 flex items-center justify-end gap-1.5 text-[11px] text-muted">
+              <span>Less</span>
+              {[0.12, 0.32, 0.52, 0.72, 0.9].map((a) => (
+                <span
+                  key={a}
+                  className="size-3 rounded-[4px]"
+                  style={{
+                    backgroundColor: `color-mix(in srgb, var(--color-expense) ${Math.round(
+                      a * 100
+                    )}%, white)`,
+                  }}
+                />
+              ))}
+              <span>More</span>
+            </div>
           </div>
 
           {/* Day detail */}
@@ -114,7 +140,7 @@ function DayPanel({ date, txns }: { date: Date | null; txns: Transaction[] }) {
     .reduce((s, t) => s + t.amount, 0);
 
   return (
-    <div className="rounded-card border border-line bg-white p-6 shadow-soft">
+    <div className="rounded-card border border-line bg-white p-6 shadow-card">
       {!date ? (
         <div className="grid place-items-center py-16 text-center text-sm text-muted">
           <div>
