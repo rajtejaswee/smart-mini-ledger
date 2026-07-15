@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { create, list, summary, remove } from "../controllers/transaction.controller";
+import { create, list, summary, remove, restore } from "../controllers/transaction.controller";
 import { validateBody } from "../middlewares/validate";
 import { requireAuth } from "../middlewares/auth";
 import { createTransactionSchema } from "../validators/transaction.schema";
@@ -13,5 +13,6 @@ router.get("/summary", summary); // before "/:id"-style routes
 router.get("/", list);
 router.post("/", validateBody(createTransactionSchema), create);
 router.delete("/:id", remove);
+router.post("/:id/restore", restore);
 
 export default router;

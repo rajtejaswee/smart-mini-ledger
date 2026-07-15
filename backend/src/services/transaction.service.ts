@@ -2,16 +2,74 @@ import { prisma } from "../config/db";
 import { ApiError } from "../middlewares/errorHandler";
 import type { CreateTransactionInput } from "../validators/transaction.schema";
 
+// Two entries with the same amount + type + category recorded within this window
+// are almost certainly an accidental double-submit.
+const DUPLICATE_WINDOW_MS = 30_000;
+
+async function findRecentDuplicate(
+  userId: string,
+  data: { amount: number; type: "INCOME" | "EXPENSE"; category: string }
+) {
+  const since = new Date(Date.now() - DUPLICATE_WINDOW_MS);
+  return prisma.transaction.findFirst({
+    where: {
+      userId,
+      isDeleted: false,
+      amount: data.amount,
+      type: data.type,
+      category: data.category,
+      createdAt: { gte: since },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
 export async function createTransaction(userId: string, input: CreateTransactionInput) {
+  const { force, ...data } = input;
+
+  if (!force) {
+    const duplicate = await findRecentDuplicate(userId, data);
+    if (duplicate) {
+      throw new ApiError(
+        409,
+        "This looks like a transaction you just added. Add it anyway?",
+        {
+          existing: {
+            id: duplicate.id,
+            amount: duplicate.amount,
+            type: duplicate.type,
+            category: duplicate.category,
+            note: duplicate.note,
+            createdAt: duplicate.createdAt,
+          },
+        },
+        "POSSIBLE_DUPLICATE"
+      );
+    }
+  }
+
   return prisma.transaction.create({
     data: {
       userId,
-      amount: input.amount,
-      type: input.type,
-      category: input.category,
-      note: input.note,
-      date: input.date ?? new Date(),
+      amount: data.amount,
+      type: data.type,
+      category: data.category,
+      note: data.note,
+      date: data.date ?? new Date(),
     },
+  });
+}
+
+// Undo support: bring back a soft-deleted transaction (used by the 10s Undo toast).
+export async function restoreTransaction(userId: string, id: string) {
+  const existing = await prisma.transaction.findFirst({
+    where: { id, userId, isDeleted: true },
+  });
+  if (!existing) throw new ApiError(404, "Transaction not found or not deleted");
+
+  return prisma.transaction.update({
+    where: { id },
+    data: { isDeleted: false },
   });
 }
 

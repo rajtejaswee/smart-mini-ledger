@@ -23,3 +23,11 @@ export async function remove(req: Request, res: Response): Promise<void> {
   );
   res.json({ transaction });
 }
+
+export async function restore(req: Request, res: Response): Promise<void> {
+  const transaction = await service.restoreTransaction(
+    req.userId as string,
+    req.params.id as string
+  );
+  res.json({ transaction });
+}

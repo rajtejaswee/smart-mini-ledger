@@ -8,11 +8,13 @@ import { env } from "../config/env";
 export class ApiError extends Error {
   statusCode: number;
   details?: unknown;
+  code?: string;
 
-  constructor(statusCode: number, message: string, details?: unknown) {
+  constructor(statusCode: number, message: string, details?: unknown, code?: string) {
     super(message);
     this.statusCode = statusCode;
     this.details = details;
+    this.code = code;
   }
 }
 
@@ -33,6 +35,7 @@ export function errorHandler(
   const message = err instanceof Error ? err.message : "Internal Server Error";
 
   const payload: Record<string, unknown> = { error: message };
+  if (isApiError && err.code) payload.code = err.code;
   if (isApiError && err.details) payload.details = err.details;
 
   if (!env.isProd && status === 500) {
