@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
-import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { ArrowDownLeft, ArrowUpRight, Plus } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
 import type { Summary, Transaction, Burn, Replay } from "@/lib/types";
 import { formatMoney, formatMoneyCompact, formatDateLong } from "@/lib/format";
 import { runningBalanceSeries, categoryBreakdown, pctChange } from "@/lib/derive";
 import { AppLayout } from "@/components/AppLayout";
+import { Button } from "@/components/ui/Button";
+import { AddTransactionModal } from "@/components/transactions/AddTransactionModal";
 import { BalanceHero } from "@/components/dashboard/BalanceHero";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { TrendBadge } from "@/components/dashboard/TrendBadge";
@@ -51,26 +53,28 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [addOpen, setAddOpen] = useState(false);
 
-  useEffect(() => {
-    Promise.all([
+  const load = useCallback(async () => {
+    const [s, t, b, r, pr] = await Promise.all([
       api.get<{ summary: Summary }>("/transactions/summary"),
       api.get<{ transactions: Transaction[] }>("/transactions"),
       api.get<Burn>("/insights/burn"),
       api.get<Replay>("/insights/replay"),
       api.get<Replay>(`/insights/replay?month=${prevMonthKey()}`),
-    ])
-      .then(([s, t, b, r, pr]) =>
-        setData({
-          summary: s.data.summary,
-          txns: t.data.transactions,
-          burn: b.data,
-          replay: r.data,
-          prevReplay: pr.data,
-        })
-      )
-      .finally(() => setLoading(false));
+    ]);
+    setData({
+      summary: s.data.summary,
+      txns: t.data.transactions,
+      burn: b.data,
+      replay: r.data,
+      prevReplay: pr.data,
+    });
   }, []);
+
+  useEffect(() => {
+    load().finally(() => setLoading(false));
+  }, [load]);
 
   return (
     <AppLayout>
@@ -82,14 +86,30 @@ export default function Dashboard() {
             {user?.name?.split(" ")[0]}
           </h1>
         </div>
-        <p className="text-sm text-muted">{formatDateLong(new Date().toISOString())}</p>
+        <div className="flex items-center gap-4">
+          <p className="hidden text-sm text-muted sm:block">
+            {formatDateLong(new Date().toISOString())}
+          </p>
+          <Button onClick={() => setAddOpen(true)} className="hidden sm:inline-flex">
+            <Plus className="size-4" />
+            Add transaction
+          </Button>
+        </div>
       </div>
 
-      {loading || !data ? (
-        <GridSkeleton />
-      ) : (
-        <DashboardGrid data={data} />
-      )}
+      {loading || !data ? <GridSkeleton /> : <DashboardGrid data={data} />}
+
+      {/* Mobile floating action button */}
+      <button
+        type="button"
+        onClick={() => setAddOpen(true)}
+        aria-label="Add transaction"
+        className="fixed bottom-6 right-6 z-30 grid size-14 place-items-center rounded-pill bg-primary text-primary-ink shadow-float transition-transform duration-200 hover:scale-105 active:scale-95 sm:hidden"
+      >
+        <Plus className="size-6" />
+      </button>
+
+      <AddTransactionModal open={addOpen} onClose={() => setAddOpen(false)} reload={load} />
     </AppLayout>
   );
 }

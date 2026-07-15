@@ -22,3 +22,15 @@ export function apiError(err: unknown, fallback = "Something went wrong"): strin
   }
   return fallback;
 }
+
+// Machine-readable code (e.g. "POSSIBLE_DUPLICATE") the backend attaches to some errors.
+export function apiCode(err: unknown): string | undefined {
+  if (axios.isAxiosError(err)) return err.response?.data?.code;
+  return undefined;
+}
+
+// Details payload (e.g. the existing transaction on a duplicate).
+export function apiDetails<T = unknown>(err: unknown): T | undefined {
+  if (axios.isAxiosError(err)) return err.response?.data?.details;
+  return undefined;
+}
