@@ -31,7 +31,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
       {open && (
         <div className="fixed inset-0 z-50 grid place-items-end p-0 sm:place-items-center sm:p-4">
           <motion.div
-            className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -42,7 +42,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
             role="dialog"
             aria-modal="true"
             aria-label={title}
-            className="relative w-full rounded-t-card border border-line bg-white shadow-float sm:max-w-md sm:rounded-card"
+            className="relative w-full rounded-t-card border border-line bg-card shadow-float sm:max-w-md sm:rounded-card"
             initial={{ opacity: 0, y: 20, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.98 }}

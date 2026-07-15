@@ -17,7 +17,7 @@ export function SpendingDnaCard({
     : "No expenses recorded yet.";
 
   return (
-    <div className="flex h-full flex-col rounded-card border border-line bg-white p-6 shadow-card">
+    <div className="flex h-full flex-col rounded-card border border-line bg-card p-6 shadow-card">
       <h3 className="eyebrow">Spending DNA</h3>
 
       {slices.length === 0 ? (

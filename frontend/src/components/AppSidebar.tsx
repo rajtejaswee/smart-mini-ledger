@@ -46,7 +46,7 @@ export function AppSidebar() {
               cn(
                 "flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium transition-colors duration-200",
                 isActive
-                  ? "bg-primary/15 text-white ring-1 ring-inset ring-primary/25 shadow-[0_0_24px_-10px_rgba(59,130,246,0.75)]"
+                  ? "bg-primary/15 text-white ring-1 ring-inset ring-primary/25 shadow-[0_0_24px_-8px_rgba(65,234,212,0.8)]"
                   : "text-sidebar-muted hover:bg-white/5 hover:text-white"
               )
             }

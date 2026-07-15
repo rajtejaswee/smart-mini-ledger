@@ -50,7 +50,7 @@ export default function CalendarPage() {
       ) : (
         <div className="grid animate-rise gap-5 lg:grid-cols-3">
           {/* Heatmap grid */}
-          <div className="rounded-card border border-line bg-white p-4 shadow-card sm:p-6 lg:col-span-2">
+          <div className="rounded-card border border-line bg-card p-4 shadow-card sm:p-6 lg:col-span-2">
             <div className="grid grid-cols-7 gap-1.5">
               {WEEKDAYS.map((d) => (
                 <div key={d} className="pb-2 text-center text-xs font-semibold text-muted">
@@ -74,13 +74,13 @@ export default function CalendarPage() {
                       backgroundColor:
                         c.spend > 0
                           ? `color-mix(in srgb, var(--color-expense) ${Math.round(
-                              12 + 70 * intensity
-                            )}%, white)`
+                              16 + 74 * intensity
+                            )}%, #131711)`
                           : undefined,
                     }}
                     className={cn(
                       "relative flex aspect-square flex-col rounded-[12px] border p-1.5 text-left transition-transform duration-150 hover:scale-[1.04]",
-                      c.spend > 0 ? "border-transparent" : "border-line bg-white",
+                      c.spend > 0 ? "border-transparent" : "border-line bg-card",
                       isSel && "ring-2 ring-primary ring-offset-1",
                       isToday && !isSel && "ring-1 ring-primary/40"
                     )}
@@ -118,7 +118,7 @@ export default function CalendarPage() {
                   style={{
                     backgroundColor: `color-mix(in srgb, var(--color-expense) ${Math.round(
                       a * 100
-                    )}%, white)`,
+                    )}%, #131711)`,
                   }}
                 />
               ))}
@@ -140,7 +140,7 @@ function DayPanel({ date, txns }: { date: Date | null; txns: Transaction[] }) {
     .reduce((s, t) => s + t.amount, 0);
 
   return (
-    <div className="rounded-card border border-line bg-white p-6 shadow-card">
+    <div className="rounded-card border border-line bg-card p-6 shadow-card">
       {!date ? (
         <div className="grid place-items-center py-16 text-center text-sm text-muted">
           <div>

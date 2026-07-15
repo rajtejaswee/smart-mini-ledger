@@ -7,30 +7,31 @@
   /* Type */
   --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, sans-serif;
 
-  /* Palette */
-  --color-canvas: #ffffff; /* auth page background  */
-  --color-plane: #f4f6fb; /* app content plane     */
-  --color-card: #f8fafc; /* subtle card surface   */
-  --color-primary: #2563eb; /* actions / accents     */
-  --color-primary-ink: #ffffff; /* text on primary       */
-  --color-income: #16a34a;
-  --color-expense: #dc2626;
-  --color-ink: #111827; /* primary text          */
-  --color-muted: #6b7280; /* secondary text        */
-  --color-line: #e9edf2; /* hairline borders      */
+  /* Palette — dark neon */
+  --color-canvas: #0c0f0a; /* app background        */
+  --color-plane: #0c0f0a; /* content plane         */
+  --color-card: #131711; /* elevated surface      */
+  --color-primary: #41ead4; /* brand accent (teal)   */
+  --color-primary-ink: #06110e; /* text on neon buttons  */
+  --color-income: #41ead4; /* teal                  */
+  --color-expense: #ff206e; /* pink                  */
+  --color-warning: #fbff12; /* yellow                */
+  --color-ink: #ffffff; /* primary text          */
+  --color-muted: #9aa199; /* secondary text        */
+  --color-line: rgba(255, 255, 255, 0.1); /* hairline borders */
 
-  /* Dark rail — jet black */
-  --color-sidebar: #0a0a0a;
-  --color-sidebar-ink: #e5e5e5;
-  --color-sidebar-muted: #9a9a9a;
+  /* Dark rail */
+  --color-sidebar: #080a06;
+  --color-sidebar-ink: #f2f2f2;
+  --color-sidebar-muted: #8b918a;
 
-  /* Categorical — Spending DNA donut (validated dataviz slots 1–5 + Other) */
-  --color-cat-1: #2a78d6;
-  --color-cat-2: #1baf7a;
-  --color-cat-3: #eda100;
-  --color-cat-4: #008300;
-  --color-cat-5: #4a3aa7;
-  --color-cat-other: #94a3b8;
+  /* Categorical — Spending DNA donut (dark neon set) */
+  --color-cat-1: #41ead4;
+  --color-cat-2: #ff206e;
+  --color-cat-3: #fbff12;
+  --color-cat-4: #9085e9;
+  --color-cat-5: #ff9f45;
+  --color-cat-other: rgba(255, 255, 255, 0.28);
 
   /* Radii */
   --radius-btn: 12px;
@@ -117,18 +118,18 @@
 /* Neon primary — glowing electric-blue action */
 @layer components {
   .neon-primary {
-    background-image: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
-    color: #fff;
+    background-image: linear-gradient(180deg, #5ff0de 0%, #41ead4 100%);
+    color: #06110e;
     box-shadow:
-      0 4px 16px -2px rgba(37, 99, 235, 0.5),
-      0 1px 2px rgba(37, 99, 235, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.28);
+      0 4px 20px -2px rgba(65, 234, 212, 0.5),
+      0 1px 2px rgba(65, 234, 212, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.45);
   }
   .neon-primary:hover {
     box-shadow:
-      0 10px 30px -4px rgba(37, 99, 235, 0.72),
-      inset 0 1px 0 rgba(255, 255, 255, 0.34);
-    filter: brightness(1.07);
+      0 10px 34px -4px rgba(65, 234, 212, 0.78),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55);
+    filter: brightness(1.05);
   }
 
   /* Frosted glass surface (over dark backgrounds) */

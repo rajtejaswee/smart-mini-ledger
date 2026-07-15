@@ -12,7 +12,7 @@ function DonutTip({ active, payload }: TipProps) {
   if (!active || !payload?.length) return null;
   const s = payload[0].payload;
   return (
-    <div className="rounded-xl border border-line bg-white px-3 py-2 shadow-float">
+    <div className="rounded-xl border border-line bg-card px-3 py-2 shadow-float">
       <p className="text-xs capitalize text-muted">{s.category}</p>
       <p className="tnum text-sm font-semibold text-ink">
         {formatMoney(s.amount)} · {s.pct.toFixed(0)}%

@@ -139,7 +139,7 @@ export function AddTransactionModal({
         {error && <ErrorBanner message={error} />}
 
         {/* Type toggle */}
-        <div className="grid grid-cols-2 gap-1 rounded-btn bg-card p-1">
+        <div className="grid grid-cols-2 gap-1 rounded-btn border border-line bg-white/5 p-1">
           {(["EXPENSE", "INCOME"] as const).map((t) => (
             <button
               key={t}
@@ -149,8 +149,8 @@ export function AddTransactionModal({
                 "rounded-[9px] py-2 text-sm font-semibold transition-colors duration-200",
                 type === t
                   ? t === "INCOME"
-                    ? "bg-white text-income shadow-soft"
-                    : "bg-white text-expense shadow-soft"
+                    ? "bg-income/15 text-income"
+                    : "bg-expense/15 text-expense"
                   : "text-muted hover:text-ink"
               )}
             >
@@ -177,7 +177,7 @@ export function AddTransactionModal({
               placeholder="0.00"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="tnum h-11 w-full rounded-input border border-line bg-white pl-8 pr-3.5 text-sm text-ink transition-shadow duration-200 placeholder:text-muted/60 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
+              className="tnum h-11 w-full rounded-input border border-line bg-card pl-8 pr-3.5 text-sm text-ink transition-shadow duration-200 placeholder:text-muted/60 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
               required
             />
           </div>
@@ -185,7 +185,7 @@ export function AddTransactionModal({
 
         {/* Confidence warning */}
         {confidence?.unusual && (
-          <div className="flex items-start gap-2 rounded-input border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-sm text-amber-700 animate-fade">
+          <div className="flex items-start gap-2 rounded-input border border-warning/30 bg-warning/10 px-3.5 py-2.5 text-sm text-warning animate-fade">
             <AlertTriangle className="mt-0.5 size-4 shrink-0" />
             <div>
               <p>
@@ -198,7 +198,7 @@ export function AddTransactionModal({
                 <button
                   type="button"
                   onClick={() => setAmount(String(confidence.suggestedAmount))}
-                  className="mt-1 font-semibold text-amber-800 underline underline-offset-2"
+                  className="mt-1 font-semibold text-warning underline underline-offset-2"
                 >
                   Did you mean {formatMoney(confidence.suggestedAmount)}?
                 </button>
@@ -217,7 +217,7 @@ export function AddTransactionModal({
             placeholder="e.g. Food"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="h-11 w-full rounded-input border border-line bg-white px-3.5 text-sm text-ink transition-shadow duration-200 placeholder:text-muted/60 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
+            className="h-11 w-full rounded-input border border-line bg-card px-3.5 text-sm text-ink transition-shadow duration-200 placeholder:text-muted/60 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
             required
           />
           <div className="mt-1 flex flex-wrap gap-1.5">
@@ -250,7 +250,7 @@ export function AddTransactionModal({
               placeholder="—"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="h-11 w-full rounded-input border border-line bg-white px-3.5 text-sm text-ink transition-shadow duration-200 placeholder:text-muted/60 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
+              className="h-11 w-full rounded-input border border-line bg-card px-3.5 text-sm text-ink transition-shadow duration-200 placeholder:text-muted/60 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
             />
           </div>
           <div className="flex flex-col gap-1.5">
@@ -263,15 +263,15 @@ export function AddTransactionModal({
               value={date}
               max={today()}
               onChange={(e) => setDate(e.target.value)}
-              className="h-11 w-full rounded-input border border-line bg-white px-3.5 text-sm text-ink transition-shadow duration-200 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
+              className="h-11 w-full rounded-input border border-line bg-card px-3.5 text-sm text-ink transition-shadow duration-200 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
             />
           </div>
         </div>
 
         {/* Duplicate confirmation */}
         {pendingDuplicate ? (
-          <div className="rounded-input border border-amber-200 bg-amber-50 p-3.5 animate-fade">
-            <p className="flex items-start gap-2 text-sm text-amber-800">
+          <div className="rounded-input border border-warning/30 bg-warning/10 p-3.5 animate-fade">
+            <p className="flex items-start gap-2 text-sm text-warning">
               <Sparkles className="mt-0.5 size-4 shrink-0" />
               This looks like a transaction you just added. Add it anyway?
             </p>

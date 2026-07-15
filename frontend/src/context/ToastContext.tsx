@@ -56,7 +56,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.98 }}
                 transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="pointer-events-auto flex items-center gap-4 rounded-btn bg-ink px-4 py-3 text-white shadow-float"
+                className="glass pointer-events-auto flex items-center gap-4 rounded-btn px-4 py-3 text-white shadow-float"
               >
                 <div className="min-w-0">
                   <p className="text-sm font-semibold">{t.title}</p>

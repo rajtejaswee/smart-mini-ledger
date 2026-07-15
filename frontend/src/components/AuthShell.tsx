@@ -19,9 +19,9 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
   return (
     <main className="grid min-h-dvh lg:grid-cols-2">
       {/* Brand panel */}
-      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-[#050505] via-[#0e0e10] to-[#191919] p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <div className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-white/[0.06] blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 -left-20 size-80 rounded-full bg-white/[0.03] blur-3xl" />
+      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-[#06110e] via-[#0a1512] to-[#0c0f0a] p-12 text-white lg:flex lg:flex-col lg:justify-between">
+        <div className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-primary/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -left-20 size-80 rounded-full bg-expense/10 blur-3xl" />
 
         <div className="relative flex items-center gap-2.5">
           <span className="glass grid size-9 place-items-center rounded-[11px] text-white">
@@ -44,7 +44,7 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
           {features.map((f) => (
             <li key={f} className="flex items-center gap-3 text-sm text-white/75">
               <span className="grid size-6 shrink-0 place-items-center rounded-full bg-white/10">
-                <Check className="size-3.5 text-emerald-300" />
+                <Check className="size-3.5 text-primary" />
               </span>
               {f}
             </li>

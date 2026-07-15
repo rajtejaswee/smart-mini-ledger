@@ -28,9 +28,10 @@ export function BalanceHero({
   const animated = useCountUp(balance);
 
   return (
-    <div className="relative flex h-full flex-col overflow-hidden rounded-card bg-gradient-to-br from-[#050505] via-[#0e0e10] to-[#191919] p-6 text-white shadow-hero sm:p-7">
-      {/* soft glow */}
-      <div className="pointer-events-none absolute -right-16 -top-20 size-56 rounded-full bg-white/[0.06] blur-3xl" />
+    <div className="relative flex h-full flex-col overflow-hidden rounded-card bg-gradient-to-br from-[#06110e] via-[#0a1512] to-[#0c0f0a] p-6 text-white shadow-hero ring-1 ring-primary/15 sm:p-7">
+      {/* neon glows */}
+      <div className="pointer-events-none absolute -right-16 -top-20 size-56 rounded-full bg-primary/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 -left-16 size-56 rounded-full bg-expense/10 blur-3xl" />
 
       <div className="relative flex items-start justify-between">
         <div>
@@ -61,7 +62,7 @@ export function BalanceHero({
           value={income.value}
           trend={income.trend}
           goodWhenUp
-          tint="text-emerald-300"
+          tint="text-income"
         />
         <MiniStat
           icon={<ArrowUpRight className="size-4" />}
@@ -69,7 +70,7 @@ export function BalanceHero({
           value={expense.value}
           trend={expense.trend}
           goodWhenUp={false}
-          tint="text-rose-300"
+          tint="text-expense"
         />
       </div>
     </div>

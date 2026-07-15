@@ -14,7 +14,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
       <AppSidebar />
 
       {/* Mobile top bar (sidebar is desktop-only) */}
-      <header className="flex items-center justify-between border-b border-line bg-white px-4 py-3 lg:hidden">
+      <header className="flex items-center justify-between border-b border-line bg-card px-4 py-3 lg:hidden">
         <Logo />
         <Button variant="ghost" size="sm" onClick={logout} aria-label="Sign out">
           <LogOut className="size-4" />

@@ -29,7 +29,7 @@ export const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
           id={inputId}
           ref={ref}
           className={cn(
-            "h-11 w-full rounded-input border bg-white px-3.5 text-sm text-ink",
+            "h-11 w-full rounded-input border bg-card px-3.5 text-sm text-ink",
             "placeholder:text-muted/60 transition-shadow duration-200",
             "focus:outline-none focus:ring-4",
             icon && "pl-10",

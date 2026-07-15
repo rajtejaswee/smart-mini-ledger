@@ -11,7 +11,7 @@ function AreaTip({ active, payload }: TipProps) {
   if (!active || !payload?.length) return null;
   const p = payload[0].payload;
   return (
-    <div className="rounded-xl border border-line bg-white px-3 py-2 shadow-float">
+    <div className="rounded-xl border border-line bg-card px-3 py-2 shadow-float">
       <p className="text-xs text-muted">{formatDate(p.date)}</p>
       <p className="tnum text-sm font-semibold text-ink">{formatMoney(p.value)}</p>
     </div>
@@ -27,7 +27,7 @@ export function BalanceAreaChart({
   onDark?: boolean;
   height?: number;
 }) {
-  const stroke = onDark ? "#e5e5e5" : "var(--color-primary)";
+  const stroke = onDark ? "#41ead4" : "var(--color-primary)";
   const gradId = onDark ? "balFillDark" : "balFill";
   return (
     <ResponsiveContainer width="100%" height={height}>

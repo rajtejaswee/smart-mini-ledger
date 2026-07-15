@@ -10,7 +10,7 @@ const items = [
 
 export function MobileNav() {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-white/95 backdrop-blur-md lg:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-canvas/90 backdrop-blur-md lg:hidden">
       {items.map((it) => (
         <NavLink
           key={it.to}

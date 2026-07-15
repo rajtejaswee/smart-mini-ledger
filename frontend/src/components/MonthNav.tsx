@@ -18,7 +18,7 @@ export function MonthNav({
         type="button"
         onClick={onPrev}
         aria-label="Previous month"
-        className="grid size-9 place-items-center rounded-btn border border-line bg-white text-muted transition-colors hover:text-ink"
+        className="grid size-9 place-items-center rounded-btn border border-line bg-card text-muted transition-colors hover:text-ink"
       >
         <ChevronLeft className="size-4" />
       </button>
@@ -30,7 +30,7 @@ export function MonthNav({
         onClick={onNext}
         disabled={!canNext}
         aria-label="Next month"
-        className="grid size-9 place-items-center rounded-btn border border-line bg-white text-muted transition-colors hover:text-ink disabled:pointer-events-none disabled:opacity-40"
+        className="grid size-9 place-items-center rounded-btn border border-line bg-card text-muted transition-colors hover:text-ink disabled:pointer-events-none disabled:opacity-40"
       >
         <ChevronRight className="size-4" />
       </button>

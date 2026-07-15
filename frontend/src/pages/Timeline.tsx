@@ -32,7 +32,7 @@ export default function Timeline() {
           ))}
         </div>
       ) : groups.length === 0 ? (
-        <div className="grid place-items-center rounded-card border border-line bg-white py-20 text-center text-sm text-muted shadow-soft">
+        <div className="grid place-items-center rounded-card border border-line bg-card py-20 text-center text-sm text-muted shadow-soft">
           <div>
             <CalendarClock className="mx-auto mb-2 size-6 text-line" />
             No transactions this month.
@@ -74,7 +74,7 @@ export default function Timeline() {
                         {!last && <span className="w-px flex-1 bg-line" />}
                       </div>
 
-                      <div className="mb-3 flex flex-1 items-center justify-between rounded-card border border-line bg-white px-4 py-3 shadow-soft">
+                      <div className="mb-3 flex flex-1 items-center justify-between rounded-card border border-line bg-card px-4 py-3 shadow-soft">
                         <div className="flex items-center gap-3">
                           <span className="grid size-9 shrink-0 place-items-center rounded-full bg-plane text-muted">
                             <Icon className="size-4" />

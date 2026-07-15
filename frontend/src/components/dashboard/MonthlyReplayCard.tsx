@@ -34,7 +34,7 @@ export function MonthlyReplayCard({ replay }: { replay: Replay }) {
     replay.earned > 0 ? Math.max(0, (replay.earned - replay.spent) / replay.earned) : 0;
 
   return (
-    <div className="flex h-full flex-col rounded-card border border-line bg-white p-6 shadow-card">
+    <div className="flex h-full flex-col rounded-card border border-line bg-card p-6 shadow-card">
       <h3 className="eyebrow">This month</h3>
       <dl className="mt-4 space-y-3.5">
         <Row label="Earned" value={formatMoney(replay.earned)} tone="income" />

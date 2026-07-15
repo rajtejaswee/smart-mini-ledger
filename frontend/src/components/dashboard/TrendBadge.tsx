@@ -22,8 +22,8 @@ export function TrendBadge({
         "inline-flex items-center gap-1 rounded-pill px-2 py-0.5 text-xs font-semibold",
         onDark
           ? good
-            ? "bg-white/10 text-emerald-300"
-            : "bg-white/10 text-rose-300"
+            ? "bg-white/10 text-income"
+            : "bg-white/10 text-expense"
           : good
             ? "bg-income/10 text-income"
             : "bg-expense/10 text-expense"
