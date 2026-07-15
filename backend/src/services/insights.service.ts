@@ -28,10 +28,14 @@ export async function checkConfidence(userId: string, input: ConfidenceInput) {
 
   const count = rows.length;
   if (count < 3) {
+    // Same shape as the scored branch (nulls, not missing keys) so callers can read
+    // `.ratio` without narrowing a union.
     return {
       unusual: false,
       count,
       average: null,
+      ratio: null,
+      suggestedAmount: null,
       reason: "Not enough history for this category yet",
     };
   }
@@ -55,7 +59,7 @@ export async function checkConfidence(userId: string, input: ConfidenceInput) {
     }
   }
 
-  return { unusual, count, average, ratio: round2(ratio), suggestedAmount };
+  return { unusual, count, average, ratio: round2(ratio), suggestedAmount, reason: null };
 }
 
 // ── 2. Cash Burn Meter ───────────────────────────────────────────────

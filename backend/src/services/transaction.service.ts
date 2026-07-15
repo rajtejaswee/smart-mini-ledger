@@ -1,5 +1,7 @@
 import { prisma } from "../config/db";
 import { ApiError } from "../middlewares/errorHandler";
+import { shouldAlert, runHighSpendAlert } from "./alert.service";
+import type { AlertDecision } from "./alert.service";
 import type { CreateTransactionInput } from "../validators/transaction.schema";
 
 // Two entries with the same amount + type + category recorded within this window
@@ -48,7 +50,11 @@ export async function createTransaction(userId: string, input: CreateTransaction
     }
   }
 
-  return prisma.transaction.create({
+  // Decide BEFORE inserting: checkConfidence averages every row in the category, so
+  // saving first would let this transaction dilute the baseline it's measured against.
+  const decision = await shouldAlert(userId, data);
+
+  const txn = await prisma.transaction.create({
     data: {
       userId,
       amount: data.amount,
@@ -58,7 +64,16 @@ export async function createTransaction(userId: string, input: CreateTransaction
       date: data.date ?? new Date(),
     },
   });
+
+  // Fire-and-forget: SMTP latency must not slow the 201, and a bounce must not fail it.
+  // `void` is deliberate — runHighSpendAlert swallows its own errors.
+  void runHighSpendAlert(userId, txn, decision);
+
+  return txn;
 }
+
+// Exported for the alert tests, which need the decision without the insert.
+export type { AlertDecision };
 
 // Undo support: bring back a soft-deleted transaction (used by the 10s Undo toast).
 export async function restoreTransaction(userId: string, id: string) {

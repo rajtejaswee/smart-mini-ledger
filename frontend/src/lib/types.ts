@@ -5,6 +5,7 @@ export interface User {
   name: string;
   email: string;
   monthlyIncome: number | null;
+  emailAlerts: boolean;
   createdAt: string;
 }
 

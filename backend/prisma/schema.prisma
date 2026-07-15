@@ -21,6 +21,7 @@ model User {
   passwordHash  String
   name          String
   monthlyIncome Float?        // optional — helps the Cash Burn Meter projection
+  emailAlerts   Boolean       @default(true) // opt-out for the high-spend email alert
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   transactions  Transaction[]

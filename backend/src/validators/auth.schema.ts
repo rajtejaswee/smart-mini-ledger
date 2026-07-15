@@ -29,6 +29,7 @@ export const updateProfileSchema = z.object({
     .transform((n) => Math.round(n * 100) / 100)
     .nullable()
     .optional(),
+  emailAlerts: z.boolean().optional(),
 });
 
 export const changePasswordSchema = z.object({

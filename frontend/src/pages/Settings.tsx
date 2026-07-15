@@ -5,6 +5,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { Card } from "@/components/ui/Card";
 import { Field } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
+import { Toggle } from "@/components/ui/Toggle";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
@@ -24,6 +25,7 @@ export default function Settings() {
 
       <div className="stagger grid max-w-2xl grid-cols-1 gap-5">
         <ProfileCard />
+        <NotificationsCard />
         <PasswordCard />
 
         <Card>
@@ -129,6 +131,44 @@ function ProfileCard() {
           </Button>
         </div>
       </form>
+    </Card>
+  );
+}
+
+function NotificationsCard() {
+  const { user, updateUser } = useAuth();
+  const { show } = useToast();
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  // Toggles save on flip (no Save button); on failure we roll the switch back.
+  async function onChange(next: boolean) {
+    setError("");
+    setSaving(true);
+    try {
+      const res = await api.patch<{ user: User }>("/auth/me", { emailAlerts: next });
+      updateUser(res.data.user);
+      show({ title: next ? "High-spend alerts on" : "High-spend alerts off" });
+    } catch (err) {
+      setError(apiError(err, "Could not update your alert preference"));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Card>
+      <p className="eyebrow">Notifications</p>
+      <div className="mt-4 flex flex-col gap-4">
+        {error && <ErrorBanner message={error} />}
+        <Toggle
+          checked={user?.emailAlerts ?? true}
+          onChange={onChange}
+          disabled={saving}
+          label="High-spend email alerts"
+          description="Email me when an expense is unusually large for its category."
+        />
+      </div>
     </Card>
   );
 }

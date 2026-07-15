@@ -17,6 +17,7 @@ function toPublicUser(user: User) {
     name: user.name,
     email: user.email,
     monthlyIncome: user.monthlyIncome,
+    emailAlerts: user.emailAlerts,
     createdAt: user.createdAt,
   };
 }
@@ -53,9 +54,10 @@ export async function getCurrentUser(userId: string) {
 
 export async function updateProfile(userId: string, input: UpdateProfileInput) {
   // Only apply the keys the client actually sent, so omitting one never wipes it.
-  const data: { name?: string; monthlyIncome?: number | null } = {};
+  const data: { name?: string; monthlyIncome?: number | null; emailAlerts?: boolean } = {};
   if (input.name !== undefined) data.name = input.name;
   if (input.monthlyIncome !== undefined) data.monthlyIncome = input.monthlyIncome;
+  if (input.emailAlerts !== undefined) data.emailAlerts = input.emailAlerts;
 
   if (Object.keys(data).length === 0) {
     throw new ApiError(400, "Nothing to update");
