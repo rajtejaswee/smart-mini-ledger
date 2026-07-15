@@ -2,12 +2,24 @@ import { useEffect, useState } from "react";
 import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
-import type { Summary } from "@/lib/types";
-import { formatMoney } from "@/lib/format";
-import { cn } from "@/lib/cn";
-import { AppHeader } from "@/components/AppHeader";
-import { Card } from "@/components/ui/Card";
-import { useCountUp } from "@/hooks/useCountUp";
+import type { Summary, Transaction, Burn, Replay } from "@/lib/types";
+import { formatMoney, formatMoneyCompact, formatDateLong } from "@/lib/format";
+import { runningBalanceSeries, categoryBreakdown, pctChange } from "@/lib/derive";
+import { AppLayout } from "@/components/AppLayout";
+import { BalanceHero } from "@/components/dashboard/BalanceHero";
+import { KpiCard } from "@/components/dashboard/KpiCard";
+import { TrendBadge } from "@/components/dashboard/TrendBadge";
+import { SpendingDnaCard } from "@/components/dashboard/SpendingDnaCard";
+import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
+import { MonthlyReplayCard } from "@/components/dashboard/MonthlyReplayCard";
+
+interface DashboardData {
+  summary: Summary;
+  txns: Transaction[];
+  burn: Burn;
+  replay: Replay;
+  prevReplay: Replay;
+}
 
 function greeting(): string {
   const h = new Date().getHours();
@@ -16,96 +28,126 @@ function greeting(): string {
   return "Good evening";
 }
 
-function BalanceCard({ balance }: { balance: number }) {
-  const animated = useCountUp(balance);
-  return (
-    <Card className="bg-white sm:col-span-2">
-      <p className="text-sm font-medium text-muted">Current balance</p>
-      <p className="tnum mt-2 text-4xl font-bold tracking-tight text-ink">
-        {formatMoney(animated)}
-      </p>
-    </Card>
-  );
+function prevMonthKey(): string {
+  const now = new Date();
+  const p = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  return `${p.getFullYear()}-${String(p.getMonth() + 1).padStart(2, "0")}`;
 }
 
-function MiniStat({
-  label,
-  value,
-  kind,
-}: {
-  label: string;
-  value: number;
-  kind: "income" | "expense";
-}) {
-  const isIncome = kind === "income";
+function GridSkeleton() {
   return (
-    <Card className="bg-white">
-      <div className="flex items-center gap-2">
-        <span
-          className={cn(
-            "grid size-8 place-items-center rounded-[10px]",
-            isIncome ? "bg-income/10 text-income" : "bg-expense/10 text-expense"
-          )}
-        >
-          {isIncome ? <ArrowDownLeft className="size-4" /> : <ArrowUpRight className="size-4" />}
-        </span>
-        <p className="text-sm font-medium text-muted">{label}</p>
-      </div>
-      <p
-        className={cn(
-          "tnum mt-3 text-2xl font-bold tracking-tight",
-          isIncome ? "text-income" : "text-expense"
-        )}
-      >
-        {formatMoney(value)}
-      </p>
-    </Card>
-  );
-}
-
-function TilesSkeleton() {
-  return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      <div className="h-28 animate-pulse rounded-card bg-card sm:col-span-2" />
-      <div className="h-28 animate-pulse rounded-card bg-card" />
-      <div className="h-28 animate-pulse rounded-card bg-card" />
+    <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+      <div className="h-52 animate-pulse rounded-card bg-card lg:col-span-2" />
+      <div className="h-[26rem] animate-pulse rounded-card bg-card lg:row-span-2" />
+      <div className="h-32 animate-pulse rounded-card bg-card" />
+      <div className="h-32 animate-pulse rounded-card bg-card" />
+      <div className="h-64 animate-pulse rounded-card bg-card lg:col-span-2" />
+      <div className="h-64 animate-pulse rounded-card bg-card" />
     </div>
   );
 }
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const [summary, setSummary] = useState<Summary | null>(null);
+  const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get<{ summary: Summary }>("/transactions/summary")
-      .then((r) => setSummary(r.data.summary))
+    Promise.all([
+      api.get<{ summary: Summary }>("/transactions/summary"),
+      api.get<{ transactions: Transaction[] }>("/transactions"),
+      api.get<Burn>("/insights/burn"),
+      api.get<Replay>("/insights/replay"),
+      api.get<Replay>(`/insights/replay?month=${prevMonthKey()}`),
+    ])
+      .then(([s, t, b, r, pr]) =>
+        setData({
+          summary: s.data.summary,
+          txns: t.data.transactions,
+          burn: b.data,
+          replay: r.data,
+          prevReplay: pr.data,
+        })
+      )
       .finally(() => setLoading(false));
   }, []);
 
   return (
-    <div className="min-h-dvh">
-      <AppHeader />
-      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <div className="mb-8 animate-rise">
+    <AppLayout>
+      {/* Page header */}
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3 animate-rise">
+        <div>
           <p className="text-sm text-muted">{greeting()},</p>
           <h1 className="text-2xl font-bold tracking-tight text-ink">
             {user?.name?.split(" ")[0]}
           </h1>
         </div>
+        <p className="text-sm text-muted">{formatDateLong(new Date().toISOString())}</p>
+      </div>
 
-        {loading || !summary ? (
-          <TilesSkeleton />
-        ) : (
-          <div className="grid animate-rise gap-4 sm:grid-cols-2">
-            <BalanceCard balance={summary.balance} />
-            <MiniStat label="Income" value={summary.totalIncome} kind="income" />
-            <MiniStat label="Expenses" value={summary.totalExpense} kind="expense" />
-          </div>
-        )}
-      </main>
+      {loading || !data ? (
+        <GridSkeleton />
+      ) : (
+        <DashboardGrid data={data} />
+      )}
+    </AppLayout>
+  );
+}
+
+function DashboardGrid({ data }: { data: DashboardData }) {
+  const { summary, txns, burn, replay, prevReplay } = data;
+
+  const series = runningBalanceSeries(txns);
+  const { slices, total } = categoryBreakdown(txns);
+
+  // This month's net change → last month's ending balance → % trend.
+  const monthNet = replay.earned - replay.spent;
+  const balanceTrend = pctChange(summary.balance, summary.balance - monthNet);
+  const incomeTrend = pctChange(replay.earned, prevReplay.earned);
+  const expenseTrend = pctChange(replay.spent, prevReplay.spent);
+
+  const runwayNote =
+    burn.daysRemaining != null
+      ? `At ${formatMoneyCompact(burn.burnRatePerDay)}/day, funds last ~${burn.daysRemaining} days`
+      : undefined;
+
+  return (
+    <div className="grid grid-cols-1 gap-5 animate-rise lg:grid-cols-3">
+      <div className="lg:col-span-2">
+        <BalanceHero
+          balance={summary.balance}
+          series={series}
+          trendPct={balanceTrend}
+          runwayNote={runwayNote}
+        />
+      </div>
+
+      <div className="lg:row-span-2">
+        <SpendingDnaCard slices={slices} total={total} />
+      </div>
+
+      <KpiCard
+        icon={ArrowDownLeft}
+        label="Income this month"
+        value={formatMoney(replay.earned)}
+        tone="income"
+        trend={<TrendBadge pct={incomeTrend} goodWhenUp />}
+      />
+      <KpiCard
+        icon={ArrowUpRight}
+        label="Spent this month"
+        value={formatMoney(replay.spent)}
+        tone="expense"
+        trend={<TrendBadge pct={expenseTrend} goodWhenUp={false} />}
+      />
+
+      <div className="lg:col-span-2">
+        <RecentTransactions txns={txns} />
+      </div>
+
+      <div>
+        <MonthlyReplayCard replay={replay} />
+      </div>
     </div>
   );
 }

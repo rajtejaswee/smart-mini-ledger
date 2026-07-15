@@ -24,3 +24,28 @@ export interface Summary {
   totalExpense: number;
   balance: number;
 }
+
+export interface Burn {
+  balance: number;
+  burnRatePerDay: number;
+  daysRemaining: number | null;
+  monthExpense: number;
+  daysElapsed: number;
+}
+
+export interface Velocity {
+  thisWeek: number;
+  lastWeek: number;
+  changePercent: number | null;
+  direction: "up" | "down" | "flat";
+}
+
+export interface Replay {
+  month: string;
+  earned: number;
+  spent: number;
+  biggestExpense: { amount: number; category: string; date: string } | null;
+  topCategory: { category: string; count: number } | null;
+  avgDailySpend: number;
+  transactionCount: number;
+}

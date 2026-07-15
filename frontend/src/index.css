@@ -8,15 +8,29 @@
   --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   /* Palette */
-  --color-canvas: #ffffff; /* page background      */
-  --color-card: #f8fafc; /* card surface         */
-  --color-primary: #2563eb; /* actions / accents    */
-  --color-primary-ink: #ffffff; /* text on primary      */
+  --color-canvas: #ffffff; /* auth page background  */
+  --color-plane: #f4f6fb; /* app content plane     */
+  --color-card: #f8fafc; /* subtle card surface   */
+  --color-primary: #2563eb; /* actions / accents     */
+  --color-primary-ink: #ffffff; /* text on primary       */
   --color-income: #16a34a;
   --color-expense: #dc2626;
-  --color-ink: #111827; /* primary text         */
-  --color-muted: #6b7280; /* secondary text       */
-  --color-line: #e9edf2; /* hairline borders     */
+  --color-ink: #111827; /* primary text          */
+  --color-muted: #6b7280; /* secondary text        */
+  --color-line: #e9edf2; /* hairline borders      */
+
+  /* Dark sidebar rail */
+  --color-sidebar: #0f172a;
+  --color-sidebar-ink: #e2e8f0;
+  --color-sidebar-muted: #94a3b8;
+
+  /* Categorical — Spending DNA donut (validated dataviz slots 1–5 + Other) */
+  --color-cat-1: #2a78d6;
+  --color-cat-2: #1baf7a;
+  --color-cat-3: #eda100;
+  --color-cat-4: #008300;
+  --color-cat-5: #4a3aa7;
+  --color-cat-other: #94a3b8;
 
   /* Radii */
   --radius-btn: 12px;
