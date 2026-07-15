@@ -30,3 +30,6 @@ Thumbs.db
 # Misc
 coverage/
 .cache/
+
+# Local-only dev notes
+PROGRESS.md
