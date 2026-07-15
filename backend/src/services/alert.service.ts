@@ -14,6 +14,19 @@ import { highSpendAlertEmail } from "../utils/emailTemplates";
 // side is worth an email.
 const ALERT_RATIO = 3;
 
+// Rate limit: at most one email per user+category per this window. Five coffee
+// spikes in an afternoon should be one email, not five.
+const RATE_LIMIT_MS = 24 * 60 * 60 * 1000;
+
+async function recentlyAlerted(userId: string, category: string): Promise<boolean> {
+  const since = new Date(Date.now() - RATE_LIMIT_MS);
+  const row = await prisma.alertLog.findFirst({
+    where: { userId, category, sentAt: { gte: since } },
+    select: { id: true },
+  });
+  return row !== null;
+}
+
 export interface AlertDecision {
   send: boolean;
   reason: string;
@@ -88,7 +101,17 @@ export async function runHighSpendAlert(
       select: { id: true, email: true, name: true, emailAlerts: true },
     });
     if (!user) return;
-    await sendHighSpendAlert(user, txn, decision);
+
+    if (await recentlyAlerted(userId, txn.category)) {
+      console.log(`[alert] rate-limited (${txn.category}) — already alerted in the last 24h`);
+      return;
+    }
+
+    const delivered = await sendHighSpendAlert(user, txn, decision);
+    // Log only real sends, so a skipped/failed delivery doesn't start the 24h clock.
+    if (delivered) {
+      await prisma.alertLog.create({ data: { userId, category: txn.category } });
+    }
   } catch (err) {
     console.error("[alert] high-spend alert failed:", err instanceof Error ? err.message : err);
   }

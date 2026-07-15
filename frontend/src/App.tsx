@@ -1,13 +1,17 @@
+import { lazy, Suspense } from "react";
 import type { ReactNode } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { FullScreenLoader } from "@/components/FullScreenLoader";
-import Login from "@/pages/Login";
-import Signup from "@/pages/Signup";
-import Dashboard from "@/pages/Dashboard";
-import Timeline from "@/pages/Timeline";
-import CalendarPage from "@/pages/Calendar";
-import Settings from "@/pages/Settings";
+
+// Route-level code splitting: each page loads on demand, so heavyweight deps
+// (recharts lives only in Dashboard) stay out of the entry chunk.
+const Login = lazy(() => import("@/pages/Login"));
+const Signup = lazy(() => import("@/pages/Signup"));
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const Timeline = lazy(() => import("@/pages/Timeline"));
+const CalendarPage = lazy(() => import("@/pages/Calendar"));
+const Settings = lazy(() => import("@/pages/Settings"));
 
 function Protected({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -23,56 +27,58 @@ function PublicOnly({ children }: { children: ReactNode }) {
 
 export default function App() {
   return (
-    <Routes>
-      <Route
-        path="/login"
-        element={
-          <PublicOnly>
-            <Login />
-          </PublicOnly>
-        }
-      />
-      <Route
-        path="/signup"
-        element={
-          <PublicOnly>
-            <Signup />
-          </PublicOnly>
-        }
-      />
-      <Route
-        path="/"
-        element={
-          <Protected>
-            <Dashboard />
-          </Protected>
-        }
-      />
-      <Route
-        path="/timeline"
-        element={
-          <Protected>
-            <Timeline />
-          </Protected>
-        }
-      />
-      <Route
-        path="/calendar"
-        element={
-          <Protected>
-            <CalendarPage />
-          </Protected>
-        }
-      />
-      <Route
-        path="/settings"
-        element={
-          <Protected>
-            <Settings />
-          </Protected>
-        }
-      />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <Suspense fallback={<FullScreenLoader />}>
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            <PublicOnly>
+              <Login />
+            </PublicOnly>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicOnly>
+              <Signup />
+            </PublicOnly>
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <Protected>
+              <Dashboard />
+            </Protected>
+          }
+        />
+        <Route
+          path="/timeline"
+          element={
+            <Protected>
+              <Timeline />
+            </Protected>
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            <Protected>
+              <CalendarPage />
+            </Protected>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <Protected>
+              <Settings />
+            </Protected>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   );
 }

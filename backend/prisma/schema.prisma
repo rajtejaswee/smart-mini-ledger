@@ -25,6 +25,19 @@ model User {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   transactions  Transaction[]
+  alertLogs     AlertLog[]
+}
+
+// One row per high-spend email actually sent — powers the "max one alert per
+// category per day" rate limit so a burst of spikes can't flood an inbox.
+model AlertLog {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category String
+  sentAt   DateTime @default(now())
+
+  @@index([userId, category, sentAt])
 }
 
 model Transaction {

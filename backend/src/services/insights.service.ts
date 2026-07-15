@@ -64,13 +64,16 @@ export async function checkConfidence(userId: string, input: ConfidenceInput) {
 
 // ── 2. Cash Burn Meter ───────────────────────────────────────────────
 // Current balance + this-month burn rate + how long the money lasts.
+// If the user has set a monthly income, the projection runs on the NET burn
+// (spend minus expected income per day) instead of gross spend.
 export async function getBurn(userId: string) {
   const now = new Date();
   const monthStart = startOfMonth(now);
   const nextMonth = startOfNextMonth(now);
   const base = { userId, isDeleted: false } as const;
 
-  const [incomeAgg, expenseAgg, monthExpenseAgg] = await Promise.all([
+  const [user, incomeAgg, expenseAgg, monthExpenseAgg] = await Promise.all([
+    prisma.user.findUnique({ where: { id: userId }, select: { monthlyIncome: true } }),
     prisma.transaction.aggregate({ _sum: { amount: true }, where: { ...base, type: "INCOME" } }),
     prisma.transaction.aggregate({ _sum: { amount: true }, where: { ...base, type: "EXPENSE" } }),
     prisma.transaction.aggregate({
@@ -86,8 +89,17 @@ export async function getBurn(userId: string) {
   const balance = round2(totalIncome - totalExpense);
   const daysElapsed = daysElapsedInMonth(now);
   const burnRatePerDay = round2(monthExpense / Math.max(1, daysElapsed));
+
+  const monthlyIncome = user?.monthlyIncome ?? null;
+  const incomePerDay = monthlyIncome != null ? monthlyIncome / daysInMonth(now) : 0;
+  const netBurnPerDay = round2(burnRatePerDay - incomePerDay);
+
+  // sustainable = expected income covers the current spend rate, so the balance
+  // is projected to hold or grow — there is no "runs out" date to report.
+  const sustainable = monthlyIncome != null && netBurnPerDay <= 0 && balance > 0;
+  const effectiveBurn = monthlyIncome != null ? netBurnPerDay : burnRatePerDay;
   const daysRemaining =
-    burnRatePerDay > 0 && balance > 0 ? Math.floor(balance / burnRatePerDay) : null;
+    effectiveBurn > 0 && balance > 0 ? Math.floor(balance / effectiveBurn) : null;
 
   return {
     balance,
@@ -95,6 +107,9 @@ export async function getBurn(userId: string) {
     daysRemaining,
     monthExpense: round2(monthExpense),
     daysElapsed,
+    monthlyIncome,
+    netBurnPerDay: monthlyIncome != null ? netBurnPerDay : null,
+    sustainable,
   };
 }
 

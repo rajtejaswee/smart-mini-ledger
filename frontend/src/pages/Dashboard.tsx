@@ -106,9 +106,14 @@ function DashboardGrid({ data }: { data: DashboardData }) {
   const incomeTrend = pctChange(replay.earned, prevReplay.earned);
   const expenseTrend = pctChange(replay.spent, prevReplay.spent);
 
-  const runwayNote =
-    burn.daysRemaining != null
-      ? `At ${formatMoneyCompact(burn.burnRatePerDay)}/day, funds last ~${burn.daysRemaining} days`
+  // With a monthly income on file the projection is net of expected income;
+  // "sustainable" means income covers the burn, so there's no run-out date.
+  const runwayNote = burn.sustainable
+    ? "Income covers your spending — balance projected to grow"
+    : burn.daysRemaining != null
+      ? burn.netBurnPerDay != null
+        ? `At ${formatMoneyCompact(burn.netBurnPerDay)}/day net of income, funds last ~${burn.daysRemaining} days`
+        : `At ${formatMoneyCompact(burn.burnRatePerDay)}/day, funds last ~${burn.daysRemaining} days`
       : undefined;
 
   return (

@@ -224,12 +224,30 @@ shipping.
   this from the roadmap or add a real light theme.
 - **Responsive re-check** at tablet widths.
 
-### Known loose ends (small, deliberate)
-- `monthlyIncome` is settable but unread — `insights.getBurn` still projects purely from
-  transactions. Wiring it in would make the burn projection honest.
-- No rate limit on alerts: 5 spikes in a category = 5 emails. A per-user daily cap or a
-  "once per category per day" rule would be the fix if it ever gets noisy.
-- Bundle is ~849 kB (one chunk) — code-splitting is a Phase 7/8 candidate.
+### ✅ Loose ends — all three fixed
+
+**1. `monthlyIncome` now drives the burn projection.** `getBurn` reads the user's monthly
+income and, when set, projects on the **net** burn (spend/day minus expected income/day):
+- income covers spend → `sustainable: true`, no run-out date; the hero shows
+  "Income covers your spending — balance projected to grow"
+- income helps but doesn't cover → runway computed from net burn (longer, honest)
+- no income on file → exactly the old gross behaviour (`netBurnPerDay: null`)
+New `Burn` fields: `monthlyIncome`, `netBurnPerDay`, `sustainable`.
+
+**2. Alert rate limit: one email per user+category per 24h.** New `AlertLog` table
+(migration `add_alert_log`) records each *delivered* alert; `runHighSpendAlert` skips if
+that category alerted in the last 24h. Only real sends are logged, so a failed/skipped
+delivery doesn't start the clock — a retry after an SMTP failure still alerts.
+
+**3. Bundle split: entry chunk 851 kB → 410 kB.** Route-level `React.lazy` for all six
+pages with a `Suspense` + `FullScreenLoader` fallback. Recharts (~373 kB) now loads only
+with the Dashboard chunk; Timeline/Calendar/Settings are 3–6 kB each.
+
+**Verified:** 9/9 harness cases against live Ethereal SMTP + real Postgres (burn math for
+none/high/low income — net/day hand-checked; spike → 1 email; two more same-category
+spikes → still 1; different category → its own email; AlertLog row counts; failed send
+doesn't start the 24h clock; retry after failure still alerts). Playwright: all lazy
+routes render, sustainable runway note shows on the hero, zero console errors.
 
 ## Notes / decisions
 

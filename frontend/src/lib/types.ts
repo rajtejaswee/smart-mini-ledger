@@ -32,6 +32,9 @@ export interface Burn {
   daysRemaining: number | null;
   monthExpense: number;
   daysElapsed: number;
+  monthlyIncome: number | null;
+  netBurnPerDay: number | null;
+  sustainable: boolean;
 }
 
 export interface Velocity {
