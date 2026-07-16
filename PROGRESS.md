@@ -193,6 +193,58 @@ duplicate / undo), timeline, calendar.
   set in `backend/.env`. Without them it logs a skip — by design, so the repo clones and
   runs with no credentials.
 
+## ✅ Hardening pass — frontend loopholes, backend audit, real connection
+
+**Frontend loopholes (5 found via full-file review, all fixed & Playwright-verified):**
+1. **No global 401 handling** — a mid-session expired JWT (7d) left the user "logged in"
+   with every call silently failing. Axios response interceptor now clears the token and
+   redirects to /login (skips login/register/change-password, whose 401s are legitimate).
+2. **Dashboard had no error path** — `load().finally()` with no catch meant a failed API
+   call left skeletons up forever. Now a shared `LoadError` card with Retry.
+3. **`useLedger` had no error path** — Timeline/Calendar rendered a misleading
+   "No transactions this month" on API failure. Same `LoadError` treatment.
+4. **Session restore dropped to /login on network blips** — `/auth/me` failing for ANY
+   reason logged the user out. Now: 401/403 → token cleared (really expired); network
+   error → token kept + full-screen "Can't reach the server" with Retry.
+5. **Duplicate-confirm bypass** — while "Add anyway?" was showing, editing
+   amount/type/category then confirming force-submitted values the backend never checked.
+   Editing any identity field now cancels the pending confirm.
+- Verified: 8/8 Playwright checks (route-abort for data-only failures, backend kill for
+  boot failure, garbage token for redirect; retries recover in place, session survives).
+
+**Backend audit (every endpoint + edge cases; 35/35 curl suite green):**
+- Regression: register/login/me, dup email 409, 2dp rounding, summary math, duplicate
+  409→force 201, delete→restore→404, ownership isolation (user B gets 404s / empty list),
+  all 4 insights, bad month param.
+- **Fixed vulnerabilities:**
+  - `amount: 1e308` → **500** (2dp transform: `Math.round(1e308×100)` = Infinity → Prisma
+    choke). Capped at ₹1e9 in create-transaction, confidence, and monthlyIncome schemas.
+    (zod 4 already rejects `1e999`/Infinity itself.)
+  - Malformed JSON → 500 **with stack leak in dev**; oversize body → 500. Body-parser
+    errors (4xx `status`) now map to clean 400/413 JSON.
+  - **No rate limit on credentials** — login was brute-forceable. `express-rate-limit`,
+    30/10min/IP on login/register/change-password only (NOT /auth/me, which fires every boot).
+  - **JWT secret fallback in prod** — deploy without `JWT_SECRET` would have silently
+    signed tokens with a public string ("forge any user"). Boot now throws in production
+    if the secret is missing or equals the dev fallback. Probe-verified both ways.
+  - `X-Powered-By: Express` removed; JSON body limit 50kb; confidence `category` capped
+    at 40 chars to match the create schema.
+- **Known-and-accepted** (documented, not built): change-password doesn't revoke
+  already-issued JWTs (needs a token-version claim + per-request DB check); duplicate
+  guard has a theoretical race under parallel identical requests; no pagination on list.
+
+**Real frontend↔backend connection (beyond the dev proxy):**
+- Express now serves the built frontend when `frontend/dist` exists (`FRONTEND_DIST`
+  overridable): `/api/*` is the API, everything else falls back to `index.html` for the
+  SPA router. One origin → axios `/api` baseURL works with **no Vite proxy and no CORS**.
+- Verified in a real browser against `:5001` only: login → dashboard, deep-link
+  `/settings` via SPA fallback, add transaction → undo round trip, zero console errors.
+- Dev flow unchanged (Vite on :5173 proxying to :5001 still works).
+
+**Also answered:** `#fbff12` (neon yellow) = `--color-warning` — the "this looks unusual"
+Confidence warning + duplicate "Add anyway?" box in the add-transaction modal (only
+visible when those flows trigger) — and `--color-cat-3`, the 3rd Spending DNA donut slice.
+
 ## 🔜 Roadmap
 
 | Phase | What | Status |

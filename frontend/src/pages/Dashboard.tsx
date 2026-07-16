@@ -5,6 +5,7 @@ import type { Summary, Transaction, Burn, Replay } from "@/lib/types";
 import { formatMoneyCompact, formatDateLong } from "@/lib/format";
 import { runningBalanceSeries, categoryBreakdown, pctChange } from "@/lib/derive";
 import { AppLayout } from "@/components/AppLayout";
+import { LoadError } from "@/components/LoadError";
 import { AddTransactionButton } from "@/components/transactions/AddTransactionButton";
 import { BalanceHero } from "@/components/dashboard/BalanceHero";
 import { SpendingDnaCard } from "@/components/dashboard/SpendingDnaCard";
@@ -49,27 +50,40 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const load = useCallback(async () => {
-    const [s, t, b, r, pr] = await Promise.all([
-      api.get<{ summary: Summary }>("/transactions/summary"),
-      api.get<{ transactions: Transaction[] }>("/transactions"),
-      api.get<Burn>("/insights/burn"),
-      api.get<Replay>("/insights/replay"),
-      api.get<Replay>(`/insights/replay?month=${prevMonthKey()}`),
-    ]);
-    setData({
-      summary: s.data.summary,
-      txns: t.data.transactions,
-      burn: b.data,
-      replay: r.data,
-      prevReplay: pr.data,
-    });
+    try {
+      const [s, t, b, r, pr] = await Promise.all([
+        api.get<{ summary: Summary }>("/transactions/summary"),
+        api.get<{ transactions: Transaction[] }>("/transactions"),
+        api.get<Burn>("/insights/burn"),
+        api.get<Replay>("/insights/replay"),
+        api.get<Replay>(`/insights/replay?month=${prevMonthKey()}`),
+      ]);
+      setData({
+        summary: s.data.summary,
+        txns: t.data.transactions,
+        burn: b.data,
+        replay: r.data,
+        prevReplay: pr.data,
+      });
+      setError(false);
+    } catch {
+      // Without this, a failed load left the skeleton grid up forever.
+      setError(true);
+    }
   }, []);
 
   useEffect(() => {
     load().finally(() => setLoading(false));
   }, [load]);
+
+  const retry = () => {
+    setError(false);
+    setLoading(true);
+    load().finally(() => setLoading(false));
+  };
 
   return (
     <AppLayout>
@@ -89,7 +103,13 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {loading || !data ? <GridSkeleton /> : <DashboardGrid data={data} />}
+      {error && !data ? (
+        <LoadError what="dashboard" onRetry={retry} />
+      ) : loading || !data ? (
+        <GridSkeleton />
+      ) : (
+        <DashboardGrid data={data} />
+      )}
     </AppLayout>
   );
 }

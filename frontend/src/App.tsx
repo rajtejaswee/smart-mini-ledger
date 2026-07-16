@@ -14,8 +14,27 @@ const CalendarPage = lazy(() => import("@/pages/Calendar"));
 const Settings = lazy(() => import("@/pages/Settings"));
 
 function Protected({ children }: { children: ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, loading, bootFailed, retryBoot } = useAuth();
   if (loading) return <FullScreenLoader />;
+  // Session restore failed on a network error (not a rejected token): the user is
+  // still logged in — offer a retry instead of dumping them on /login.
+  if (!user && bootFailed) {
+    return (
+      <div className="grid min-h-dvh place-items-center bg-canvas px-4 text-center">
+        <div>
+          <p className="text-sm font-medium text-ink">Can&rsquo;t reach the server</p>
+          <p className="mt-1 text-sm text-muted">Check your connection and try again.</p>
+          <button
+            type="button"
+            onClick={retryBoot}
+            className="mt-4 rounded-btn bg-white/5 px-4 py-2 text-sm font-semibold text-ink border border-line hover:bg-white/10"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
   return user ? <>{children}</> : <Navigate to="/login" replace />;
 }
 

@@ -15,6 +15,26 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Session expiry: a 401 mid-session (JWT lives 7d) means the token is dead — clear it
+// and send the user to /login instead of leaving every page silently broken.
+// Login/register 401s are real "wrong credentials" responses, not expiry; and the
+// change-password form handles its own 401 (wrong current password) inline.
+const AUTH_401_URLS = ["/auth/login", "/auth/register", "/auth/change-password"];
+api.interceptors.response.use(undefined, (err) => {
+  if (
+    axios.isAxiosError(err) &&
+    err.response?.status === 401 &&
+    !AUTH_401_URLS.some((u) => err.config?.url?.includes(u)) &&
+    getToken()
+  ) {
+    clearToken();
+    if (!["/login", "/signup"].includes(window.location.pathname)) {
+      window.location.assign("/login");
+    }
+  }
+  return Promise.reject(err);
+});
+
 // Pull a human-readable message out of an axios error.
 export function apiError(err: unknown, fallback = "Something went wrong"): string {
   if (axios.isAxiosError(err)) {

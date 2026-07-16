@@ -1,5 +1,6 @@
 import { CalendarClock } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
+import { LoadError } from "@/components/LoadError";
 import { MonthNav } from "@/components/MonthNav";
 import { AddTransactionButton } from "@/components/transactions/AddTransactionButton";
 import { useLedger } from "@/hooks/useLedger";
@@ -9,7 +10,7 @@ import { formatMoney, formatDayLabel, formatSigned } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
 export default function Timeline() {
-  const { txns, loading, load, month, prev, next, canNext } = useLedger();
+  const { txns, loading, error, retry, load, month, prev, next, canNext } = useLedger();
   const groups = groupByDay(txnsInMonth(txns, month));
 
   return (
@@ -25,7 +26,9 @@ export default function Timeline() {
         </div>
       </div>
 
-      {loading ? (
+      {error ? (
+        <LoadError what="timeline" onRetry={retry} />
+      ) : loading ? (
         <div className="space-y-3">
           {[0, 1, 2, 3].map((i) => (
             <div key={i} className="h-16 animate-pulse rounded-card bg-card" />

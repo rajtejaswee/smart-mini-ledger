@@ -26,6 +26,7 @@ export const updateProfileSchema = z.object({
   monthlyIncome: z
     .number()
     .nonnegative("Monthly income cannot be negative")
+    .max(1_000_000_000, "Monthly income is too large")
     .transform((n) => Math.round(n * 100) / 100)
     .nullable()
     .optional(),

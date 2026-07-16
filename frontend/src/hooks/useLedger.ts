@@ -7,20 +7,34 @@ import { addMonths, startOfMonth, isSameMonth } from "@/lib/month";
 export function useLedger() {
   const [txns, setTxns] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [month, setMonth] = useState(() => startOfMonth(new Date()));
 
   const load = useCallback(async () => {
-    const res = await api.get<{ transactions: Transaction[] }>("/transactions");
-    setTxns(res.data.transactions);
+    try {
+      const res = await api.get<{ transactions: Transaction[] }>("/transactions");
+      setTxns(res.data.transactions);
+      setError(false);
+    } catch {
+      // Distinguish "failed to load" from "no transactions" — an API error must not
+      // render as an innocent empty state.
+      setError(true);
+    }
   }, []);
 
   useEffect(() => {
     load().finally(() => setLoading(false));
   }, [load]);
 
+  const retry = () => {
+    setError(false);
+    setLoading(true);
+    load().finally(() => setLoading(false));
+  };
+
   const prev = () => setMonth((m) => addMonths(m, -1));
   const next = () => setMonth((m) => addMonths(m, 1));
   const canNext = !isSameMonth(month, startOfMonth(new Date()));
 
-  return { txns, loading, load, month, prev, next, canNext };
+  return { txns, loading, error, retry, load, month, prev, next, canNext };
 }

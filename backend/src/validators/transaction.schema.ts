@@ -4,6 +4,9 @@ export const createTransactionSchema = z.object({
   amount: z
     .number()
     .positive("Amount must be greater than 0")
+    // ₹100 crore cap: keeps 2dp rounding (n * 100) and long-run aggregates far
+    // from Float overflow — 1e308 would round to Infinity and 500 on insert.
+    .max(1_000_000_000, "Amount is too large")
     // Money: keep to 2 decimals so floating-point noise never reaches the DB.
     .transform((n) => Math.round(n * 100) / 100),
   type: z.enum(["INCOME", "EXPENSE"]),

@@ -46,6 +46,13 @@ export function AddTransactionModal({
   const amountNum = Number(amount);
   const valid = amountNum > 0 && category.trim().length > 0;
 
+  // The duplicate confirm only vouches for the exact values the backend flagged.
+  // If the user edits amount/type/category while "Add anyway?" is up, the pending
+  // force-submit would skip the duplicate guard for values it never checked.
+  useEffect(() => {
+    setPendingDuplicate(false);
+  }, [amount, type, category]);
+
   function reset() {
     setType("EXPENSE");
     setAmount("");

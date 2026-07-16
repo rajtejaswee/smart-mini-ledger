@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { CalendarDays } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
+import { LoadError } from "@/components/LoadError";
 import { MonthNav } from "@/components/MonthNav";
 import { AddTransactionButton } from "@/components/transactions/AddTransactionButton";
 import { useLedger } from "@/hooks/useLedger";
@@ -11,7 +12,7 @@ import { cn } from "@/lib/cn";
 import type { Transaction } from "@/lib/types";
 
 export default function CalendarPage() {
-  const { txns, loading, load, month, prev, next, canNext } = useLedger();
+  const { txns, loading, error, retry, load, month, prev, next, canNext } = useLedger();
   const [selected, setSelected] = useState<Date | null>(null);
 
   // Auto-select the most recent active day so the panel is never empty on load.
@@ -45,7 +46,9 @@ export default function CalendarPage() {
         </div>
       </div>
 
-      {loading ? (
+      {error ? (
+        <LoadError what="calendar" onRetry={retry} />
+      ) : loading ? (
         <div className="h-96 animate-pulse rounded-card bg-card" />
       ) : (
         <div className="grid animate-rise gap-5 lg:grid-cols-3">
