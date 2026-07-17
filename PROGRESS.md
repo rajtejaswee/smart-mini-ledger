@@ -259,8 +259,11 @@ visible when those flows trigger) — and `--color-cat-3`, the 3rd Spending DNA 
 - **Demo account decision:** `demo@ledger.app` / `demo1234` stays as a **deliberate public
   demo** for the portfolio — fake data only; visitors can explore a populated dashboard
   without signing up.
-- Email credentials (Gmail App Password) go straight into `.env` on the server —
-  not a code change, nothing to redeploy.
+- **Email credentials: configured and live-tested.** Gmail App Password in the local
+  `.env` (gitignored; sender is a dedicated projects Gmail, not the personal account).
+  Verified the full production pipeline — a real ₹6,000 spike through `createTransaction`
+  → confidence trigger → rate limiter → Nodemailer → Gmail SMTP → inbox delivery.
+  For deploy: copy the three `EMAIL_*` values into the server's environment.
 
 ## 🔜 Roadmap
 
