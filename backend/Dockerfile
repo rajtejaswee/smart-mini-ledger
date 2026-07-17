@@ -33,4 +33,6 @@ COPY --from=builder /app/dist ./dist
 COPY prisma ./prisma
 
 EXPOSE 5001
-CMD ["node", "dist/server.js"]
+# Apply pending migrations, then serve — safe to run on every boot
+# (migrate deploy is a no-op when the schema is already current).
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
