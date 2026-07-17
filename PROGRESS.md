@@ -245,6 +245,23 @@ duplicate / undo), timeline, calendar.
 Confidence warning + duplicate "Add anyway?" box in the add-transaction modal (only
 visible when those flows trigger) — and `--color-cat-3`, the 3rd Spending DNA donut slice.
 
+## ✅ Phase 7 — Pre-deploy polish
+
+- **First-run empty state:** a brand-new account now lands on a dark hero card
+  ("Your ledger is empty") with an "Add your first transaction" CTA that opens the add
+  modal — no more page of zeros. Verified with a fresh signup: nudge → CTA → add →
+  dashboard populates.
+- **Delete + Undo on Timeline & Calendar:** every row gets a trash button (always visible
+  on touch, fades in on hover) → soft delete → 8s Undo toast → restore. One shared
+  `useDeleteTransaction` hook. Verified scoped to the list: 1 row → 0 → 1 after undo.
+- **Tablet check:** 768×1024 (single column + bottom nav) and 1024×768 (the exact `lg`
+  sidebar breakpoint) both render correctly — screenshots reviewed.
+- **Demo account decision:** `demo@ledger.app` / `demo1234` stays as a **deliberate public
+  demo** for the portfolio — fake data only; visitors can explore a populated dashboard
+  without signing up.
+- Email credentials (Gmail App Password) go straight into `.env` on the server —
+  not a code change, nothing to redeploy.
+
 ## 🔜 Roadmap
 
 | Phase | What | Status |
@@ -256,7 +273,7 @@ visible when those flows trigger) — and `--color-cat-3`, the 3rd Spending DNA 
 | 4 | Smart Duplicate Detection + Undo | ✅ |
 | 5 | **Frontend** — editorial UI: auth, dashboard, Spending DNA, Timeline, Calendar, Settings | ✅ |
 | 6 | Email notification (Nodemailer + Gmail) — high-spend smart alert | ✅ |
-| 7 | Polish — error/empty/loading states, responsive, dark mode | 🔜 Next |
+| 7 | Polish — error/empty/loading states, responsive | ✅ |
 | 8 | Deploy live | |
 
 **Roughly 6 of 8 phases done** — every feature is built; what's left is polish and

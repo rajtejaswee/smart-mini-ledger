@@ -4,9 +4,12 @@ import { api } from "@/lib/api";
 import type { Summary, Transaction, Burn, Replay } from "@/lib/types";
 import { formatMoneyCompact, formatDateLong } from "@/lib/format";
 import { runningBalanceSeries, categoryBreakdown, pctChange } from "@/lib/derive";
+import { Plus, Sparkles } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { LoadError } from "@/components/LoadError";
+import { Button } from "@/components/ui/Button";
 import { AddTransactionButton } from "@/components/transactions/AddTransactionButton";
+import { AddTransactionModal } from "@/components/transactions/AddTransactionModal";
 import { BalanceHero } from "@/components/dashboard/BalanceHero";
 import { SpendingDnaCard } from "@/components/dashboard/SpendingDnaCard";
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
@@ -107,10 +110,38 @@ export default function Dashboard() {
         <LoadError what="dashboard" onRetry={retry} />
       ) : loading || !data ? (
         <GridSkeleton />
+      ) : data.txns.length === 0 ? (
+        <FirstRun reload={load} />
       ) : (
         <DashboardGrid data={data} />
       )}
     </AppLayout>
+  );
+}
+
+// A brand-new account used to land on a page of zeros with no guidance.
+function FirstRun({ reload }: { reload: () => void }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative overflow-hidden rounded-card bg-gradient-to-br from-[#06110e] via-[#0a1512] to-[#0c0f0a] px-6 py-16 text-center text-white shadow-hero ring-1 ring-primary/15 animate-rise">
+      <div className="pointer-events-none absolute -right-16 -top-20 size-56 rounded-full bg-primary/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 -left-16 size-56 rounded-full bg-expense/10 blur-3xl" />
+      <div className="relative">
+        <span className="glass mx-auto grid size-14 place-items-center rounded-2xl">
+          <Sparkles className="size-6 text-primary" />
+        </span>
+        <h2 className="mt-5 text-xl font-bold tracking-tight">Your ledger is empty</h2>
+        <p className="mx-auto mt-2 max-w-sm text-sm text-white/60">
+          Add your first transaction and the dashboard comes alive — balance trend,
+          spending DNA, and your monthly recap all build from here.
+        </p>
+        <Button size="lg" className="mt-6" onClick={() => setOpen(true)}>
+          <Plus className="size-4" />
+          Add your first transaction
+        </Button>
+      </div>
+      <AddTransactionModal open={open} onClose={() => setOpen(false)} reload={reload} />
+    </div>
   );
 }
 

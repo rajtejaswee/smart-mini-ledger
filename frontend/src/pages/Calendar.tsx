@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, Trash2 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { LoadError } from "@/components/LoadError";
 import { MonthNav } from "@/components/MonthNav";
 import { AddTransactionButton } from "@/components/transactions/AddTransactionButton";
 import { useLedger } from "@/hooks/useLedger";
+import { useDeleteTransaction } from "@/hooks/useDeleteTransaction";
 import { buildCalendar, sameDay, isSameMonth, WEEKDAYS } from "@/lib/month";
 import { categoryIcon } from "@/lib/categories";
 import { formatMoney, formatMoneyCompact, formatDayLabel } from "@/lib/format";
@@ -130,14 +131,23 @@ export default function CalendarPage() {
           </div>
 
           {/* Day detail */}
-          <DayPanel date={selected} txns={selectedTxns} />
+          <DayPanel date={selected} txns={selectedTxns} reload={load} />
         </div>
       )}
     </AppLayout>
   );
 }
 
-function DayPanel({ date, txns }: { date: Date | null; txns: Transaction[] }) {
+function DayPanel({
+  date,
+  txns,
+  reload,
+}: {
+  date: Date | null;
+  txns: Transaction[];
+  reload: () => void;
+}) {
+  const deleteTx = useDeleteTransaction(reload);
   const spent = txns
     .filter((t) => t.type === "EXPENSE")
     .reduce((s, t) => s + t.amount, 0);
@@ -166,7 +176,7 @@ function DayPanel({ date, txns }: { date: Date | null; txns: Transaction[] }) {
                 const Icon = categoryIcon(t.category);
                 const income = t.type === "INCOME";
                 return (
-                  <li key={t.id} className="flex items-center gap-3 py-3">
+                  <li key={t.id} className="group flex items-center gap-3 py-3">
                     <span className="grid size-9 shrink-0 place-items-center rounded-full bg-plane text-muted">
                       <Icon className="size-4" />
                     </span>
@@ -185,6 +195,14 @@ function DayPanel({ date, txns }: { date: Date | null; txns: Transaction[] }) {
                       {income ? "+" : "−"}
                       {formatMoney(t.amount)}
                     </span>
+                    <button
+                      type="button"
+                      aria-label={`Delete ${t.category} transaction`}
+                      onClick={() => deleteTx(t)}
+                      className="grid size-8 shrink-0 place-items-center rounded-btn text-muted transition-all duration-150 hover:bg-expense/10 hover:text-expense sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
                   </li>
                 );
               })}

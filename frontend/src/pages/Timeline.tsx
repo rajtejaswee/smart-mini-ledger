@@ -1,9 +1,10 @@
-import { CalendarClock } from "lucide-react";
+import { CalendarClock, Trash2 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { LoadError } from "@/components/LoadError";
 import { MonthNav } from "@/components/MonthNav";
 import { AddTransactionButton } from "@/components/transactions/AddTransactionButton";
 import { useLedger } from "@/hooks/useLedger";
+import { useDeleteTransaction } from "@/hooks/useDeleteTransaction";
 import { txnsInMonth, groupByDay } from "@/lib/month";
 import { categoryIcon } from "@/lib/categories";
 import { formatMoney, formatDayLabel, formatSigned } from "@/lib/format";
@@ -11,6 +12,7 @@ import { cn } from "@/lib/cn";
 
 export default function Timeline() {
   const { txns, loading, error, retry, load, month, prev, next, canNext } = useLedger();
+  const deleteTx = useDeleteTransaction(load);
   const groups = groupByDay(txnsInMonth(txns, month));
 
   return (
@@ -77,7 +79,7 @@ export default function Timeline() {
                         {!last && <span className="w-px flex-1 bg-line" />}
                       </div>
 
-                      <div className="mb-3 flex flex-1 items-center justify-between rounded-card border border-line bg-card px-4 py-3 shadow-soft">
+                      <div className="group mb-3 flex flex-1 items-center justify-between rounded-card border border-line bg-card px-4 py-3 shadow-soft">
                         <div className="flex items-center gap-3">
                           <span className="grid size-9 shrink-0 place-items-center rounded-full bg-plane text-muted">
                             <Icon className="size-4" />
@@ -89,15 +91,26 @@ export default function Timeline() {
                             {t.note && <p className="truncate text-xs text-muted">{t.note}</p>}
                           </div>
                         </div>
-                        <span
-                          className={cn(
-                            "tnum shrink-0 text-sm font-semibold",
-                            income ? "text-income" : "text-ink"
-                          )}
-                        >
-                          {income ? "+" : "−"}
-                          {formatMoney(t.amount)}
-                        </span>
+                        <div className="flex shrink-0 items-center gap-2">
+                          <span
+                            className={cn(
+                              "tnum text-sm font-semibold",
+                              income ? "text-income" : "text-ink"
+                            )}
+                          >
+                            {income ? "+" : "−"}
+                            {formatMoney(t.amount)}
+                          </span>
+                          {/* Visible on touch; fades in on pointer hover */}
+                          <button
+                            type="button"
+                            aria-label={`Delete ${t.category} transaction`}
+                            onClick={() => deleteTx(t)}
+                            className="grid size-8 place-items-center rounded-btn text-muted transition-all duration-150 hover:bg-expense/10 hover:text-expense sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
+                          >
+                            <Trash2 className="size-4" />
+                          </button>
+                        </div>
                       </div>
                     </li>
                   );
