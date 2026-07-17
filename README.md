@@ -16,9 +16,9 @@
 
 | | |
 |---|---|
-| **App** | https://smart-mini-ledger.vercel.app <!-- update after deploy --> |
-| **API health** | https://smart-mini-ledger.up.railway.app/api/health <!-- update after deploy --> |
-| **Demo login** | `demo@ledger.app` / `demo1234` — a seeded account with 2 months of data, so every chart is alive the moment you sign in |
+| **App** | https://smart-mini-ledger-zeta.vercel.app |
+| **API health** | https://smart-mini-ledger-production.up.railway.app/api/health |
+| **Demo login** | One click on **"Explore the demo account"** on the login page — or `demo@ledger.app` / `demo1234`. Two months of seeded data, so every chart is alive the moment you're in |
 
 ---
 
