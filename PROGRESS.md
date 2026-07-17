@@ -265,6 +265,36 @@ visible when those flows trigger) — and `--color-cat-3`, the 3rd Spending DNA 
   → confidence trigger → rate limiter → Nodemailer → Gmail SMTP → inbox delivery.
   For deploy: copy the three `EMAIL_*` values into the server's environment.
 
+## ✅ Phase 8 prep — split-deploy readiness (Railway + Vercel) & README
+
+**Deploy-shape code changes (each one would have broken the split deploy):**
+- `api.ts` baseURL now honours `VITE_API_URL` (Vercel has no dev proxy) — falls back to
+  `/api` for local dev.
+- `frontend/vercel.json` SPA rewrite — deep links like `/timeline` would 404 on Vercel
+  without it.
+- `app.set("trust proxy", 1)` — behind Railway's proxy, express-rate-limit v8 would
+  otherwise throw on X-Forwarded-For (or key every visitor to one IP).
+- `CLIENT_URL` now accepts a comma-separated origin list (localhost + Vercel both allowed).
+- `start:prod` script: `prisma migrate deploy && node dist/server.js` for Railway's start
+  command.
+
+**Frontend email validation (was missing — user asked):** both auth forms are
+`noValidate`, so an invalid email previously round-tripped to the server and came back as
+a generic "Validation failed". Now validated client-side with an inline field error
+(shared `isValidEmail`, clears as you retype); Signup also checks empty name.
+
+**Verified (prod build, cross-origin, real browser):** backend compiled to `dist/` and
+booted with `NODE_ENV=production`; CORS allows listed origins and blocks others; rate
+limiter runs cleanly behind a simulated proxy; frontend built with `VITE_API_URL` and
+served on :4173 against the API on :5001 — the exact Vercel↔Railway shape: login,
+dashboard, deep links all green; invalid email shows inline error with **zero** network
+calls.
+
+**README.md written** — live-link placeholders, smart-features table with the logic
+behind each, mermaid architecture diagram (render-verified, matches the codebase), tech
+choices with alternatives considered, security hardening list, API reference, local
+setup, and the full Railway + Vercel deployment guide.
+
 ## 🔜 Roadmap
 
 | Phase | What | Status |

@@ -3,7 +3,7 @@ import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { apiError } from "@/lib/api";
+import { apiError, isValidEmail } from "@/lib/api";
 import { AuthShell } from "@/components/AuthShell";
 import { Field } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
@@ -15,11 +15,23 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError("");
+    setEmailError("");
+    // The form is noValidate (we own the UX), so check the email here instead of
+    // round-tripping to the server for a generic "Validation failed".
+    if (!isValidEmail(email)) {
+      setEmailError("Enter a valid email address");
+      return;
+    }
+    if (!password) {
+      setError("Password is required");
+      return;
+    }
     setLoading(true);
     try {
       await login(email, password);
@@ -54,7 +66,11 @@ export default function Login() {
           placeholder="you@example.com"
           icon={<Mail className="size-4" />}
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setEmailError("");
+          }}
+          error={emailError || undefined}
           required
         />
         <Field

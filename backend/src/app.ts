@@ -12,8 +12,16 @@ import insightRoutes from "./routes/insights.routes";
 const app = express();
 app.disable("x-powered-by");
 
+// Behind a reverse proxy (Railway, Render, Fly) the client IP arrives in
+// X-Forwarded-For. Without this, express-rate-limit would treat every visitor
+// as one IP (and v8 refuses to run at all when the header is present).
+app.set("trust proxy", 1);
+
 // --- Global middleware ---
-app.use(cors({ origin: env.clientUrl, credentials: true }));
+// CLIENT_URL accepts a comma-separated list so localhost and the deployed
+// frontend can both talk to the API, e.g. "http://localhost:5173,https://app.vercel.app"
+const allowedOrigins = env.clientUrl.split(",").map((o) => o.trim());
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json({ limit: "50kb" }));
 
 // Body-parser failures are client errors, not server crashes: malformed JSON

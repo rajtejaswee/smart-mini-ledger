@@ -3,7 +3,7 @@ import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { User as UserIcon, Mail, Lock } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { apiError } from "@/lib/api";
+import { apiError, isValidEmail } from "@/lib/api";
 import { AuthShell } from "@/components/AuthShell";
 import { Field } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
@@ -16,11 +16,21 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError("");
+    setEmailError("");
+    if (!name.trim()) {
+      setError("Name is required");
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setEmailError("Enter a valid email address");
+      return;
+    }
     if (password.length < 8) {
       setError("Password must be at least 8 characters");
       return;
@@ -69,7 +79,11 @@ export default function Signup() {
           placeholder="you@example.com"
           icon={<Mail className="size-4" />}
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setEmailError("");
+          }}
+          error={emailError || undefined}
           required
         />
         <Field

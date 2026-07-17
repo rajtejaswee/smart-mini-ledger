@@ -6,8 +6,15 @@ export const getToken = () => localStorage.getItem(TOKEN_KEY);
 export const setToken = (t: string) => localStorage.setItem(TOKEN_KEY, t);
 export const clearToken = () => localStorage.removeItem(TOKEN_KEY);
 
-// baseURL "/api" is proxied to the backend by Vite in dev (see vite.config.ts).
-export const api = axios.create({ baseURL: "/api" });
+// Dev: "/api" is proxied to the backend by Vite (see vite.config.ts).
+// Split deploys (frontend on Vercel, backend on Railway): set VITE_API_URL to the
+// backend's full URL, e.g. https://your-backend.up.railway.app/api
+export const api = axios.create({ baseURL: import.meta.env.VITE_API_URL ?? "/api" });
+
+// Shared by Login/Signup so client-side checks match the backend's normalization.
+export function isValidEmail(raw: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw.trim());
+}
 
 api.interceptors.request.use((config) => {
   const token = getToken();
