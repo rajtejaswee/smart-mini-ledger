@@ -195,36 +195,6 @@ Email alerts are **optional** — leave `EMAIL_*` blank and the app runs normall
 
 ---
 
-## ☁️ Deployment (Railway + Vercel)
-
-**Backend — Railway** (add a PostgreSQL service, then a service from this repo):
-
-| Setting | Value |
-|---|---|
-| Root directory | `backend` |
-| Build command | `npm run build` |
-| Start command | `npm run start:prod` *(runs migrations, then starts)* |
-
-| Env var | Value |
-|---|---|
-| `NODE_ENV` | `production` |
-| `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` (Railway reference) |
-| `JWT_SECRET` | output of `openssl rand -base64 48` |
-| `JWT_EXPIRES_IN` | `7d` |
-| `CLIENT_URL` | your Vercel URL (comma-separate to allow several origins) |
-| `EMAIL_USER` / `EMAIL_APP_PASSWORD` / `EMAIL_FROM` | Gmail sender credentials (optional) |
-
-**Frontend — Vercel** (import the repo):
-
-| Setting | Value |
-|---|---|
-| Root directory | `frontend` (framework preset: Vite) |
-| Env var | `VITE_API_URL` = `https://<your-railway-domain>/api` |
-
-Deep-link routing is handled by `frontend/vercel.json`. Deploy order: backend first → copy its domain into `VITE_API_URL` → deploy frontend → copy the Vercel domain into `CLIENT_URL` → redeploy backend once.
-
----
-
 ## 🧭 Values Behind the Build
 
 - **Trust the math, show the why.** Every "smart" flag explains itself — "3× your coffee average" — never an unexplained verdict.
