@@ -22,9 +22,9 @@
 
 ---
 
-## ✨ What Makes It Smart
+## ✨ The Twists — Smart Features I Chose to Build
 
-No external AI APIs, no black boxes. All intelligence is **derived statistically from your own transaction history** — deterministic, private, free to run, and fast enough to execute on every keystroke.
+The assignment asked for a simple ledger with an original spin. These are the twists and add-ons I designed on top of the core CRUD — no external AI APIs, no black boxes. All the "intelligence" is **derived statistically from the user's own transaction history**: deterministic, private, free to run, and fast enough to execute on every keystroke.
 
 | Feature | What it does | The logic behind it |
 |---|---|---|
@@ -46,14 +46,16 @@ No external AI APIs, no black boxes. All intelligence is **derived statistically
 ## 🏗 Architecture
 
 ```mermaid
-flowchart LR
+flowchart TB
   subgraph Client["Frontend · Vercel"]
+    direction TB
     UI["React 19 + Tailwind v4 SPA"]
-    AX["Axios client<br/>JWT in localStorage"]
+    AX["Axios client · JWT in localStorage"]
     UI --> AX
   end
 
   subgraph API["Backend · Railway"]
+    direction TB
     MW["Middleware chain<br/>CORS · rate limit · zod validation · JWT auth"]
     TXS["Transaction service<br/>duplicate guard · soft delete"]
     INS["Insights engine<br/>confidence · burn · velocity · replay"]
@@ -61,7 +63,7 @@ flowchart LR
     EMS["Email service<br/>Nodemailer · fail-soft"]
     MW --> TXS
     MW --> INS
-    TXS -. "fire-and-forget<br/>on create" .-> ALS
+    TXS -. "fire-and-forget on create" .-> ALS
     ALS --> EMS
   end
 
@@ -73,7 +75,8 @@ flowchart LR
   TXS --> DB
   INS --> DB
   ALS --> DB
-  EMS --> GMAIL --> INBOX
+  EMS --> GMAIL
+  GMAIL --> INBOX
 ```
 
 Three design decisions worth noting:
@@ -228,9 +231,3 @@ Deep-link routing is handled by `frontend/vercel.json`. Deploy order: backend fi
 - **Never lose user data.** Soft deletes, undo windows, duplicate confirmation instead of silent rejection.
 - **Fail soft at the edges.** A dead mail server, a network blip, an expired token — each degrades to a clear, recoverable state, never a broken screen.
 - **Verify against reality.** Every phase was tested end-to-end: real SMTP inboxes, real browser drives (Playwright), curl audits against the running API — not just unit assertions.
-
----
-
-## 📜 License
-
-MIT — use it, fork it, learn from it.
