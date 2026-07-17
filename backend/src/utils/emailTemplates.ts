@@ -13,6 +13,10 @@ const longDate = new Intl.DateTimeFormat("en-IN", {
   year: "numeric",
 });
 
+// CLIENT_URL may be a comma-separated origin list (for CORS); email links must
+// point at exactly one app URL — the first entry is the canonical one.
+const appUrl = env.clientUrl.split(",")[0].trim();
+
 // Emails can't use our stylesheet — clients strip <style>, so everything is inline.
 // Table layout + hex colours is the boring choice that actually renders in Gmail.
 const BRAND = "#0B0B0F";
@@ -66,7 +70,7 @@ export function highSpendAlertEmail(input: HighSpendEmailInput): {
     comparison.replace(/×/g, "x"),
     ``,
     `If that was you, no action needed. If it wasn't, open your ledger and remove it:`,
-    env.clientUrl,
+    appUrl,
     ``,
     `You can turn these alerts off in Settings.`,
   ].join("\n");
@@ -98,14 +102,14 @@ export function highSpendAlertEmail(input: HighSpendEmailInput): {
         <p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:${INK};">${comparison}</p>
         <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:${MUTED};">If that was you, nothing to do. If it wasn't, open your ledger and remove it.</p>
 
-        <a href="${env.clientUrl}" style="display:inline-block;background:${ACCENT};color:${BRAND};font-size:14px;font-weight:700;text-decoration:none;padding:12px 22px;border-radius:10px;">Open Ledger</a>
+        <a href="${appUrl}" style="display:inline-block;background:${ACCENT};color:${BRAND};font-size:14px;font-weight:700;text-decoration:none;padding:12px 22px;border-radius:10px;">Open Ledger</a>
       </td>
     </tr>
     <tr>
       <td style="padding:16px 28px 24px;border-top:1px solid #ECECEF;">
         <p style="margin:0;font-size:12px;line-height:1.5;color:${MUTED};">
           You're getting this because high-spend alerts are on. Turn them off any time in
-          <a href="${env.clientUrl}/settings" style="color:${MUTED};">Settings</a>.
+          <a href="${appUrl}/settings" style="color:${MUTED};">Settings</a>.
         </p>
       </td>
     </tr>

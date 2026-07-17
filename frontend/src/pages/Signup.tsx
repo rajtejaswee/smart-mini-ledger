@@ -65,7 +65,7 @@ export default function Signup() {
           label="Name"
           name="name"
           autoComplete="name"
-          placeholder="Raj Tejaswee"
+          placeholder="Your name"
           icon={<UserIcon className="size-4" />}
           value={name}
           onChange={(e) => setName(e.target.value)}
